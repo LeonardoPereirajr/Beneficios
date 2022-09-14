@@ -1,0 +1,41 @@
+import { useEffect, useState } from "react"
+import useGlobalState from "./globalState"
+import Tarefa_1 from "./Pages/Tarefa_1";
+import changeTaskNumber from "./Functions/changeTaskNumber";
+import Tarefa_2 from "./Pages/Tarefa_2";
+
+export default function App({ data,info }) {
+  const { globalState, setGlobalState } = useGlobalState();
+  const[tarefaAtiva,setTarefaAtiva]=useState(null);
+  console.log(data)
+
+  useEffect(() => {
+    setGlobalState(data);
+  }, [data])
+
+  useEffect(()=>{
+    info.getTaskData().then(task=> changeTaskNumber(task,setTarefaAtiva));
+  },[])
+
+
+
+  function renderPage() {
+    if (tarefaAtiva===1) {
+      return <Tarefa_1 />
+    }else if(tarefaAtiva==2){
+      return <Tarefa_2/>
+    }else if (tarefaAtiva==3){
+      return <Tarefa_1/>
+    }
+     else{
+      return <Tarefa_2/>
+    }
+  }
+  if (globalState) {
+    return (
+      <div className="px-1">
+        {renderPage()}
+      </div>
+    )
+  }
+}

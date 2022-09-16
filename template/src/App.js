@@ -7,7 +7,6 @@ import Tarefa_2 from "./Pages/Tarefa_2";
 export default function App({ data,info }) {
   const { globalState, setGlobalState } = useGlobalState();
   const[tarefaAtiva,setTarefaAtiva]=useState(null);
-  console.log(data)
 
   useEffect(() => {
     setGlobalState(data);
@@ -20,7 +19,9 @@ export default function App({ data,info }) {
 
 
   function renderPage() {
-    if (tarefaAtiva===1) {
+    console.log(tarefaAtiva)
+    if (tarefaAtiva==1) {
+      console.log("Entrou")
       return <Tarefa_1 />
     }else if(tarefaAtiva==2){
       return <Tarefa_2/>
@@ -28,7 +29,7 @@ export default function App({ data,info }) {
       return <Tarefa_1/>
     }
      else{
-      return <Tarefa_2/>
+      return <Tarefa_1/>
     }
   }
   if (globalState) {

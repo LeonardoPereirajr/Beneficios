@@ -5,6 +5,7 @@ export default async function getColaborador(user) {
     myHeaders.append("encryptionType", "0");
     myHeaders.append("Content-Type", "aplication/json");
 
+    // TODO : MUDAR ALTENTICAÇÃO
     var raw = JSON.stringify({
         "solicitante": user
     });

@@ -67,11 +67,11 @@ export default function Tarefa_1() {
                 })
         })
     }, [])
-
     return (
         <div className="grid">
             {
                 globalState.variaveisProcesso?.observacao &&
+
                 <div className="col-12 field">
                     <label>
                         Observação CSC
@@ -117,27 +117,23 @@ export default function Tarefa_1() {
 
             <div className="grid px-2" style={{ display: motivoSelecionado ? "" : "none" }}>
 
-                <div className="col-12 field">
-                    <label> Escolha o beneficio. </label>
-                    <Dropdown
-                        value={beneficioSelecionado}
-                        options={beneficio}
-                        className="w-full"
-                        onChange={(e) => setBeneficioSelecionado(e.value)}
-                    />
-                </div>
-
-
-
-                {/* Vale Transporte */}
-
                 {
-                    motivoSelecionado &&
-
+                    motivoSelecionado?.cod == 1 &&
                     <>
+                        <div className="col-12 field">
+                            <label> Escolha o beneficio. </label>
+                            <Dropdown
+                                value={beneficioSelecionado}
+                                options={beneficio}
+                                className="w-full"
+                                onChange={(e) => setBeneficioSelecionado(e.value)}
+                            />
+                        </div>
                         {
-                            beneficioSelecionado.cod === 1 &&
+                            beneficioSelecionado?.cod == 1 &&
                             <>
+                                {/* Vale Transporte */}
+
                                 <div className="col-12 field">
                                     <Divider align="left" > Vale Transporte </Divider>
                                     <label>
@@ -339,22 +335,217 @@ export default function Tarefa_1() {
                                                 readonly
                                             />
                                         </div>
-                                    </>}
+                                    </>
+                                }
+                                {
+                                    operacaoSelecionada?.cod == 2 &&
+                                    <>
+
+                                        <div className="col-12 field">
+                                            <label>
+                                                Nome da Operadora de Vale Transporte
+                                            </label>
+                                            <InputText className="w-full" value={"Empresa XPTO"}
+                                                readonly
+                                            />
+                                        </div>
+
+                                        <div className="col-12 field">
+                                            <label>
+                                                Numero da Linha
+                                            </label>
+                                            <InputNumber className="w-full" value={999999}
+                                                readonly
+                                            />
+                                        </div>
+
+                                        <div className="col-12 field">
+                                            <label>
+                                                Tipo de Transporte
+                                            </label>
+                                            <InputText className="w-full" value={'Onibus,Metro,Trem,Etc.'}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Valor da Tarifa
+                                            </label>
+                                            <InputNumber className="w-full" value={99.99}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Quantidade Utilizada para Ida
+                                            </label>
+                                            <InputNumber className="w-full" value={1}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Quantidade Utilizada para Volta
+                                            </label>
+                                            <InputNumber className="w-full" value={1}
+                                                readonly
+                                            />
+                                        </div>
+
+                                        <div className="col-4 field">
+                                            <label>
+                                                Escala Vale Transporte
+                                            </label>
+                                            <InputNumber className="w-full" value={1}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName required name='Data Início' />
+                                            <Datepicker
+                                                className='w-full'
+                                                inputClassName='obrigatorio'
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName required name='Data Fim' />
+                                            <Datepicker
+                                                className='w-full'
+                                                inputClassName='obrigatorio'
+                                            />
+                                        </div>
+                                        <Divider align="left" > GRID </Divider>
+
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 1
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field" />
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 2
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field" />
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 3
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field" />
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 4
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field" />
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 5
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field" />
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 6
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                    </>
+                                }
+                                {
+                                    operacaoSelecionada?.cod == 3 &&
+                                    <>
+                                        <div className="col-12 field">
+                                            <FieldName required name='Data Início' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+                                        <div className="col-12 field">
+                                            <FieldName required name='Data Fim' />
+                                            <Datepicker
+                                                className='w-full'
+                                                inputClassName='obrigatorio'
+                                            />
+                                        </div>
+                                    </>
+                                }
                             </>
                         }
-                    </>
 
-                }
-
-                {/* PLANO DE SAUDE */}
-
-                {
-
-                    motivoSelecionado.cod === 1 &&
-                    <>
                         {
-                            beneficioSelecionado.cod === 2 &&
+                            beneficioSelecionado?.cod == 2 &&
                             <>
+
+                                {/* PLANO DE SAUDE */}
+
                                 <div className="col-12 field">
                                     <Divider align="left" > Plano de Saude </Divider>
                                     <label>
@@ -377,68 +568,172 @@ export default function Tarefa_1() {
                                     />
                                 </div>
 
-                                <div className="col-12 field">
-                                    <label>
-                                        Plano Titular
-                                    </label>
-                                    <InputText className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-4 field">
-                                    <FieldName name='Data Inclusão' />
-                                    <Datepicker
-                                        className='w-full'
-                                    />
-                                </div>
-                                <div className="col-4 field">
-                                    <FieldName name='Data Exclusão' />
-                                    <Datepicker
-                                        className='w-full'
-                                    />
-                                </div>
+                                {
+                                    operacaoSelecionada?.cod == 1 &&
+                                    <>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Plano Titular
+                                            </label>
+                                            <InputText className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName name='Data Inclusão' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName name='Data Exclusão' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
 
-                                <Divider align="left" > Dependente </Divider>
-                                <div className="col-4 flex flex-column mb-2">
-                                    <InputText className="w-full" placeholder='Dependente 1'
-                                    />
-                                    <InputText className="w-full" placeholder='Dependente 2'
-                                    />
-                                    <InputText className="w-full" placeholder='Dependente 3'
-                                    />
-                                </div>
+                                        <Divider align="left" > Dependente </Divider>
+                                        <div className="col-4 flex flex-column mb-2">
+                                            <InputText className="w-full" placeholder='Dependente 1'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 2'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 3'
+                                            />
+                                        </div>
 
-                                <div className="col-12 field">
-                                    <label>
-                                        Marque ou desmarque quem será incluído ou excluído do Plano.
-                                    </label>
-                                </div>
-                                <div className="col-3 field">
-                                    <input id="Manter" name="base" type="radio" value="S" />
-                                    <label>
-                                        Manter dependente no Plano
-                                    </label>
-                                    <label>
-                                        <input id="Incluir" name="base" type="radio" value="S" />
-                                        Esta ação irá incluir dependente no Plano
-                                    </label>
-                                    <label>
-                                        <input id="Excluir" name="base" type="radio" value="S" />
-                                        Esta ação irá excluir dependente no Plano
-                                    </label>
-                                </div>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Marque ou desmarque quem será incluído ou excluído do Plano.
+                                            </label>
+                                        </div>
+                                        <div className="col-3 field">
+                                            <input id="Manter" name="base" type="radio" value="S" />
+                                            <label>
+                                                Manter dependente no Plano
+                                            </label>
+                                            <label>
+                                                <input id="Incluir" name="base" type="radio" value="S" />
+                                                Esta ação irá incluir dependente no Plano
+                                            </label>
+                                            <label>
+                                                <input id="Excluir" name="base" type="radio" value="S" />
+                                                Esta ação irá excluir dependente no Plano
+                                            </label>
+                                        </div>
+                                    </>
+                                }
+
+                                {
+                                    operacaoSelecionada?.cod == 2 &&
+                                    <>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Plano Titular
+                                            </label>
+                                            <InputText className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName name='Data Inclusão' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName name='Data Exclusão' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+
+                                        <Divider align="left" > Dependente </Divider>
+                                        <div className="col-4 flex flex-column mb-2">
+                                            <InputText className="w-full" placeholder='Dependente 1'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 2'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 3'
+                                            />
+                                        </div>
+
+                                        <div className="col-12 field">
+                                            <label>
+                                                Marque ou desmarque quem será incluído ou excluído do Plano.
+                                            </label>
+                                        </div>
+                                        <div className="col-3 field">
+                                            <input id="Manter" name="base" type="radio" value="S" />
+                                            <label>
+                                                Manter dependente no Plano
+                                            </label>
+                                            <label>
+                                                <input id="Incluir" name="base" type="radio" value="S" />
+                                                Esta ação irá incluir dependente no Plano
+                                            </label>
+                                            <label>
+                                                <input id="Excluir" name="base" type="radio" value="S" />
+                                                Esta ação irá excluir dependente no Plano
+                                            </label>
+                                        </div>
+                                    </>
+                                }
+
+                                {
+                                    operacaoSelecionada?.cod == 3 &&
+                                    <>
+                                        <div className="col-6 field">
+                                            <label>
+                                                Plano Titular Atual
+                                            </label>
+                                            <InputText className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field">
+                                            <FieldName name='Data Exclusão' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+
+                                        <Divider align="left" > Dependente </Divider>
+                                        <div className="col-4 flex flex-column mb-2">
+                                            <InputText className="w-full" placeholder='Dependente 1'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 2'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 3'
+                                            />
+                                        </div>
+
+                                        <div className="col-3 field">
+                                            <input id="Excluir1" name="base" type="radio" value="S" />
+                                            <label>
+                                                Excluir
+                                            </label>
+                                            <label>
+                                                <input id="Excluir2" name="base" type="radio" value="S" />
+                                                Excluir
+                                            </label>
+                                            <label>
+                                                <input id="Excluir3" name="base" type="radio" value="S" />
+                                                Excluir
+                                            </label>
+                                        </div>
+                                    </>
+                                }
+
                             </>
                         }
-                    </>
-                }
-                {/* PLANO ODONTO */}
-                {
 
-                    motivoSelecionado?.cod === 1 &&
-                    <>
+                        {/* PLANO ODONTO */}
+
                         {
-                            beneficioSelecionado.cod === 3 &&
+                            beneficioSelecionado?.cod == 3 &&
                             <>
+
                                 <div className="col-12 field">
                                     <Divider align="left" > Plano Odonto </Divider>
                                     <label>
@@ -494,18 +789,15 @@ export default function Tarefa_1() {
                                         </label>
                                     </div>
                                 </div>
+
                             </>
                         }
-                    </>
-                }
-                {/* VA / VR */}
-                {
 
-                    motivoSelecionado?.cod === 1 &&
-                    <>
+                        {/* VA/VR */}
                         {
-                            beneficioSelecionado.cod === 4 &&
+                            beneficioSelecionado?.cod == 4 &&
                             <>
+
                                 <Divider align="left" > VA / VR </Divider>
 
 
@@ -624,8 +916,1641 @@ export default function Tarefa_1() {
                                 </div>
                             </>
                         }
+
                     </>
                 }
+
+                {
+                    motivoSelecionado?.cod == 2 &&
+                    <>
+                        {/* Vale Transporte motivo 2 */}
+
+                        <div className="col-12 field">
+                            <Divider align="left" > Vale Transporte </Divider>
+                            <label>
+                                Escala Vale de transporte Atual
+                            </label>
+                            <InputText className="w-full" value={VTAtual}
+                                readonly
+                            />
+                        </div>
+
+
+                        <div className="col-12 field">
+                            <label>Tipo de operação</label>
+                            <Dropdown
+                                value={operacaoSelecionada}
+                                options={operacao}
+                                className="w-full"
+                                onChange={(e) => setOperacaoSelecionada(e.value)}
+                            />
+                        </div>
+
+                        {
+                            operacaoSelecionada?.cod == 1 &&
+                            <>
+
+                                <div className="col-12 field">
+                                    <label>
+                                        Nome da Operadora de Vale Transporte
+                                    </label>
+                                    <InputText className="w-full" value={"Empresa XPTO"}
+                                        readonly
+                                    />
+                                </div>
+
+                                <div className="col-12 field">
+                                    <label>
+                                        Numero da Linha
+                                    </label>
+                                    <InputNumber className="w-full" value={999999}
+                                        readonly
+                                    />
+                                </div>
+
+                                <div className="col-12 field">
+                                    <label>
+                                        Tipo de Transporte
+                                    </label>
+                                    <InputText className="w-full" value={'Onibus,Metro,Trem,Etc.'}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Valor da Tarifa
+                                    </label>
+                                    <InputNumber className="w-full" value={99.99}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Quantidade Utilizada para Ida
+                                    </label>
+                                    <InputNumber className="w-full" value={1}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Quantidade Utilizada para Volta
+                                    </label>
+                                    <InputNumber className="w-full" value={1}
+                                        readonly
+                                    />
+                                </div>
+
+                                <div className="col-4 field">
+                                    <label>
+                                        Escala Vale Transporte
+                                    </label>
+                                    <InputNumber className="w-full" value={1}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-4 field">
+                                    <FieldName required name='Data Início' />
+                                    <Datepicker
+                                        className='w-full'
+                                        inputClassName='obrigatorio'
+                                    />
+                                </div>
+                                <div className="col-4 field">
+                                    <FieldName required name='Data Fim' />
+                                    <Datepicker
+                                        className='w-full'
+                                        inputClassName='obrigatorio'
+                                    />
+                                </div>
+                                <Divider align="left" > GRID </Divider>
+
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 1
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 2
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 3
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 4
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 5
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 6
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                            </>
+                        }
+                        {
+                            operacaoSelecionada?.cod == 2 &&
+                            <>
+
+                                <div className="col-12 field">
+                                    <label>
+                                        Nome da Operadora de Vale Transporte
+                                    </label>
+                                    <InputText className="w-full" value={"Empresa XPTO"}
+                                        readonly
+                                    />
+                                </div>
+
+                                <div className="col-12 field">
+                                    <label>
+                                        Numero da Linha
+                                    </label>
+                                    <InputNumber className="w-full" value={999999}
+                                        readonly
+                                    />
+                                </div>
+
+                                <div className="col-12 field">
+                                    <label>
+                                        Tipo de Transporte
+                                    </label>
+                                    <InputText className="w-full" value={'Onibus,Metro,Trem,Etc.'}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Valor da Tarifa
+                                    </label>
+                                    <InputNumber className="w-full" value={99.99}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Quantidade Utilizada para Ida
+                                    </label>
+                                    <InputNumber className="w-full" value={1}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Quantidade Utilizada para Volta
+                                    </label>
+                                    <InputNumber className="w-full" value={1}
+                                        readonly
+                                    />
+                                </div>
+
+                                <div className="col-4 field">
+                                    <label>
+                                        Escala Vale Transporte
+                                    </label>
+                                    <InputNumber className="w-full" value={1}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-4 field">
+                                    <FieldName required name='Data Início' />
+                                    <Datepicker
+                                        className='w-full'
+                                        inputClassName='obrigatorio'
+                                    />
+                                </div>
+                                <div className="col-4 field">
+                                    <FieldName required name='Data Fim' />
+                                    <Datepicker
+                                        className='w-full'
+                                        inputClassName='obrigatorio'
+                                    />
+                                </div>
+                                <Divider align="left" > GRID </Divider>
+
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 1
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 2
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 3
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 4
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 5
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 6
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                            </>
+                        }
+                        {
+                            operacaoSelecionada?.cod == 3 &&
+                            <>
+                                <div className="col-12 field">
+                                    <FieldName required name='Data Início' />
+                                    <Datepicker
+                                        className='w-full'
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <FieldName required name='Data Fim' />
+                                    <Datepicker
+                                        className='w-full'
+                                        inputClassName='obrigatorio'
+                                    />
+                                </div>
+                            </>
+                        }
+                    </>
+                }
+
+                {
+                    motivoSelecionado?.cod == 3 &&
+                    <>
+                        {/* Vale Transporte motivo 3 */}
+
+                        <div className="col-12 field">
+                            <Divider align="left" > Vale Transporte </Divider>
+                            <label>
+                                Escala Vale de transporte Atual
+                            </label>
+                            <InputText className="w-full" value={VTAtual}
+                                readonly
+                            />
+                        </div>
+
+
+                        <div className="col-12 field">
+                            <label>Tipo de operação</label>
+                            <Dropdown
+                                value={operacaoSelecionada}
+                                options={operacao}
+                                className="w-full"
+                                onChange={(e) => setOperacaoSelecionada(e.value)}
+                            />
+                        </div>
+
+                        {
+                            operacaoSelecionada?.cod == 1 &&
+                            <>
+
+                                <div className="col-12 field">
+                                    <label>
+                                        Nome da Operadora de Vale Transporte
+                                    </label>
+                                    <InputText className="w-full" value={"Empresa XPTO"}
+                                        readonly
+                                    />
+                                </div>
+
+                                <div className="col-12 field">
+                                    <label>
+                                        Numero da Linha
+                                    </label>
+                                    <InputNumber className="w-full" value={999999}
+                                        readonly
+                                    />
+                                </div>
+
+                                <div className="col-12 field">
+                                    <label>
+                                        Tipo de Transporte
+                                    </label>
+                                    <InputText className="w-full" value={'Onibus,Metro,Trem,Etc.'}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Valor da Tarifa
+                                    </label>
+                                    <InputNumber className="w-full" value={99.99}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Quantidade Utilizada para Ida
+                                    </label>
+                                    <InputNumber className="w-full" value={1}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Quantidade Utilizada para Volta
+                                    </label>
+                                    <InputNumber className="w-full" value={1}
+                                        readonly
+                                    />
+                                </div>
+
+                                <div className="col-4 field">
+                                    <label>
+                                        Escala Vale Transporte
+                                    </label>
+                                    <InputNumber className="w-full" value={1}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-4 field">
+                                    <FieldName required name='Data Início' />
+                                    <Datepicker
+                                        className='w-full'
+                                        inputClassName='obrigatorio'
+                                    />
+                                </div>
+                                <div className="col-4 field">
+                                    <FieldName required name='Data Fim' />
+                                    <Datepicker
+                                        className='w-full'
+                                        inputClassName='obrigatorio'
+                                    />
+                                </div>
+                                <Divider align="left" > GRID </Divider>
+
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 1
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 2
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 3
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 4
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 5
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 6
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                            </>
+                        }
+                        {
+                            operacaoSelecionada?.cod == 2 &&
+                            <>
+
+                                <div className="col-12 field">
+                                    <label>
+                                        Nome da Operadora de Vale Transporte
+                                    </label>
+                                    <InputText className="w-full" value={"Empresa XPTO"}
+                                        readonly
+                                    />
+                                </div>
+
+                                <div className="col-12 field">
+                                    <label>
+                                        Numero da Linha
+                                    </label>
+                                    <InputNumber className="w-full" value={999999}
+                                        readonly
+                                    />
+                                </div>
+
+                                <div className="col-12 field">
+                                    <label>
+                                        Tipo de Transporte
+                                    </label>
+                                    <InputText className="w-full" value={'Onibus,Metro,Trem,Etc.'}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Valor da Tarifa
+                                    </label>
+                                    <InputNumber className="w-full" value={99.99}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Quantidade Utilizada para Ida
+                                    </label>
+                                    <InputNumber className="w-full" value={1}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Quantidade Utilizada para Volta
+                                    </label>
+                                    <InputNumber className="w-full" value={1}
+                                        readonly
+                                    />
+                                </div>
+
+                                <div className="col-4 field">
+                                    <label>
+                                        Escala Vale Transporte
+                                    </label>
+                                    <InputNumber className="w-full" value={1}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-4 field">
+                                    <FieldName required name='Data Início' />
+                                    <Datepicker
+                                        className='w-full'
+                                        inputClassName='obrigatorio'
+                                    />
+                                </div>
+                                <div className="col-4 field">
+                                    <FieldName required name='Data Fim' />
+                                    <Datepicker
+                                        className='w-full'
+                                        inputClassName='obrigatorio'
+                                    />
+                                </div>
+                                <Divider align="left" > GRID </Divider>
+
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 1
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 2
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 3
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 4
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 5
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field" />
+                                <div className="col-3 field">
+                                    <label>
+                                        Linha 6
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Numero do Cartão
+                                    </label>
+                                    <InputNumber className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                            </>
+                        }
+                        {
+                            operacaoSelecionada?.cod == 3 &&
+                            <>
+                                <div className="col-12 field">
+                                    <FieldName required name='Data Início' />
+                                    <Datepicker
+                                        className='w-full'
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <FieldName required name='Data Fim' />
+                                    <Datepicker
+                                        className='w-full'
+                                        inputClassName='obrigatorio'
+                                    />
+                                </div>
+                            </>
+                        }
+                    </>
+                }
+
+                {
+                    motivoSelecionado?.cod == 4 &&
+                    <>
+                        <div className='field col-12'>
+                            <FieldName name='Justifique' />
+                            <InputTextarea
+                                className='w-full'
+                            />
+                        </div>
+                        <div className="col-12 field">
+                            <label> Escolha o beneficio. </label>
+                            <Dropdown
+                                value={beneficioSelecionado}
+                                options={beneficio}
+                                className="w-full"
+                                onChange={(e) => setBeneficioSelecionado(e.value)}
+                            />
+                        </div>
+                        {
+                            beneficioSelecionado?.cod == 1 &&
+                            <>
+                                {/* Vale Transporte */}
+
+                                <div className="col-12 field">
+                                    <Divider align="left" > Vale Transporte </Divider>
+                                    <label>
+                                        Escala Vale de transporte Atual
+                                    </label>
+                                    <InputText className="w-full" value={VTAtual}
+                                        readonly
+                                    />
+                                </div>
+
+
+                                <div className="col-12 field">
+                                    <label>Tipo de operação</label>
+                                    <Dropdown
+                                        value={operacaoSelecionada}
+                                        options={operacao}
+                                        className="w-full"
+                                        onChange={(e) => setOperacaoSelecionada(e.value)}
+                                    />
+                                </div>
+
+                                {
+                                    operacaoSelecionada?.cod == 1 &&
+                                    <>
+
+                                        <div className="col-12 field">
+                                            <label>
+                                                Nome da Operadora de Vale Transporte
+                                            </label>
+                                            <InputText className="w-full" value={"Empresa XPTO"}
+                                                readonly
+                                            />
+                                        </div>
+
+                                        <div className="col-12 field">
+                                            <label>
+                                                Numero da Linha
+                                            </label>
+                                            <InputNumber className="w-full" value={999999}
+                                                readonly
+                                            />
+                                        </div>
+
+                                        <div className="col-12 field">
+                                            <label>
+                                                Tipo de Transporte
+                                            </label>
+                                            <InputText className="w-full" value={'Onibus,Metro,Trem,Etc.'}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Valor da Tarifa
+                                            </label>
+                                            <InputNumber className="w-full" value={99.99}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Quantidade Utilizada para Ida
+                                            </label>
+                                            <InputNumber className="w-full" value={1}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Quantidade Utilizada para Volta
+                                            </label>
+                                            <InputNumber className="w-full" value={1}
+                                                readonly
+                                            />
+                                        </div>
+
+                                        <div className="col-4 field">
+                                            <label>
+                                                Escala Vale Transporte
+                                            </label>
+                                            <InputNumber className="w-full" value={1}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName required name='Data Início' />
+                                            <Datepicker
+                                                className='w-full'
+                                                inputClassName='obrigatorio'
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName required name='Data Fim' />
+                                            <Datepicker
+                                                className='w-full'
+                                                inputClassName='obrigatorio'
+                                            />
+                                        </div>
+                                        <Divider align="left" > GRID </Divider>
+
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 1
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field" />
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 2
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field" />
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 3
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field" />
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 4
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field" />
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 5
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field" />
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 6
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                    </>
+                                }
+                                {
+                                    operacaoSelecionada?.cod == 2 &&
+                                    <>
+
+                                        <div className="col-12 field">
+                                            <label>
+                                                Nome da Operadora de Vale Transporte
+                                            </label>
+                                            <InputText className="w-full" value={"Empresa XPTO"}
+                                                readonly
+                                            />
+                                        </div>
+
+                                        <div className="col-12 field">
+                                            <label>
+                                                Numero da Linha
+                                            </label>
+                                            <InputNumber className="w-full" value={999999}
+                                                readonly
+                                            />
+                                        </div>
+
+                                        <div className="col-12 field">
+                                            <label>
+                                                Tipo de Transporte
+                                            </label>
+                                            <InputText className="w-full" value={'Onibus,Metro,Trem,Etc.'}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Valor da Tarifa
+                                            </label>
+                                            <InputNumber className="w-full" value={99.99}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Quantidade Utilizada para Ida
+                                            </label>
+                                            <InputNumber className="w-full" value={1}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Quantidade Utilizada para Volta
+                                            </label>
+                                            <InputNumber className="w-full" value={1}
+                                                readonly
+                                            />
+                                        </div>
+
+                                        <div className="col-4 field">
+                                            <label>
+                                                Escala Vale Transporte
+                                            </label>
+                                            <InputNumber className="w-full" value={1}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName required name='Data Início' />
+                                            <Datepicker
+                                                className='w-full'
+                                                inputClassName='obrigatorio'
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName required name='Data Fim' />
+                                            <Datepicker
+                                                className='w-full'
+                                                inputClassName='obrigatorio'
+                                            />
+                                        </div>
+                                        <Divider align="left" > GRID </Divider>
+
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 1
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field" />
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 2
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field" />
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 3
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field" />
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 4
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field" />
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 5
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field" />
+                                        <div className="col-3 field">
+                                            <label>
+                                                Linha 6
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-3 field">
+                                            <label>
+                                                Numero do Cartão
+                                            </label>
+                                            <InputNumber className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                    </>
+                                }
+                                {
+                                    operacaoSelecionada?.cod == 3 &&
+                                    <>
+                                        <div className="col-12 field">
+                                            <FieldName required name='Data Início' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+                                        <div className="col-12 field">
+                                            <FieldName required name='Data Fim' />
+                                            <Datepicker
+                                                className='w-full'
+                                                inputClassName='obrigatorio'
+                                            />
+                                        </div>
+                                    </>
+                                }
+                            </>
+                        }
+
+                        {
+                            beneficioSelecionado?.cod == 2 &&
+                            <>
+
+                                {/* PLANO DE SAUDE */}
+
+                                <div className="col-12 field">
+                                    <Divider align="left" > Plano de Saude </Divider>
+                                    <label>
+                                        Plano Titular Atual + Data Inclusão
+                                    </label>
+                                    <InputText className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+
+                                <div className="col-12 field">
+                                    <label>
+                                        Tipo de Operação
+                                    </label>
+                                    <Dropdown
+                                        value={operacaoSelecionadaPlano}
+                                        options={operacaoPlano}
+                                        className="w-full"
+                                        onChange={(e) => setOperacaoSelecionadaPlano(e.value)}
+                                    />
+                                </div>
+
+                                {
+                                    operacaoSelecionada?.cod == 1 &&
+                                    <>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Plano Titular
+                                            </label>
+                                            <InputText className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName name='Data Inclusão' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName name='Data Exclusão' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+
+                                        <Divider align="left" > Dependente </Divider>
+                                        <div className="col-4 flex flex-column mb-2">
+                                            <InputText className="w-full" placeholder='Dependente 1'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 2'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 3'
+                                            />
+                                        </div>
+
+                                        <div className="col-12 field">
+                                            <label>
+                                                Marque ou desmarque quem será incluído ou excluído do Plano.
+                                            </label>
+                                        </div>
+                                        <div className="col-3 field">
+                                            <input id="Manter" name="base" type="radio" value="S" />
+                                            <label>
+                                                Manter dependente no Plano
+                                            </label>
+                                            <label>
+                                                <input id="Incluir" name="base" type="radio" value="S" />
+                                                Esta ação irá incluir dependente no Plano
+                                            </label>
+                                            <label>
+                                                <input id="Excluir" name="base" type="radio" value="S" />
+                                                Esta ação irá excluir dependente no Plano
+                                            </label>
+                                        </div>
+                                    </>
+                                }
+
+                                {
+                                    operacaoSelecionada?.cod == 2 &&
+                                    <>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Plano Titular
+                                            </label>
+                                            <InputText className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName name='Data Inclusão' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName name='Data Exclusão' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+
+                                        <Divider align="left" > Dependente </Divider>
+                                        <div className="col-4 flex flex-column mb-2">
+                                            <InputText className="w-full" placeholder='Dependente 1'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 2'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 3'
+                                            />
+                                        </div>
+
+                                        <div className="col-12 field">
+                                            <label>
+                                                Marque ou desmarque quem será incluído ou excluído do Plano.
+                                            </label>
+                                        </div>
+                                        <div className="col-3 field">
+                                            <input id="Manter" name="base" type="radio" value="S" />
+                                            <label>
+                                                Manter dependente no Plano
+                                            </label>
+                                            <label>
+                                                <input id="Incluir" name="base" type="radio" value="S" />
+                                                Esta ação irá incluir dependente no Plano
+                                            </label>
+                                            <label>
+                                                <input id="Excluir" name="base" type="radio" value="S" />
+                                                Esta ação irá excluir dependente no Plano
+                                            </label>
+                                        </div>
+                                    </>
+                                }
+
+                                {
+                                    operacaoSelecionada?.cod == 3 &&
+                                    <>
+                                        <div className="col-6 field">
+                                            <label>
+                                                Plano Titular Atual
+                                            </label>
+                                            <InputText className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-6 field">
+                                            <FieldName name='Data Exclusão' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+
+                                        <Divider align="left" > Dependente </Divider>
+                                        <div className="col-4 flex flex-column mb-2">
+                                            <InputText className="w-full" placeholder='Dependente 1'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 2'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 3'
+                                            />
+                                        </div>
+
+                                        <div className="col-3 field">
+                                            <input id="Excluir1" name="base" type="radio" value="S" />
+                                            <label>
+                                                Excluir
+                                            </label>
+                                            <label>
+                                                <input id="Excluir2" name="base" type="radio" value="S" />
+                                                Excluir
+                                            </label>
+                                            <label>
+                                                <input id="Excluir3" name="base" type="radio" value="S" />
+                                                Excluir
+                                            </label>
+                                        </div>
+                                    </>
+                                }
+
+                            </>
+                        }
+
+                        {/* PLANO ODONTO */}
+
+                        {
+                            beneficioSelecionado?.cod == 3 &&
+                            <>
+
+                                <div className="col-12 field">
+                                    <Divider align="left" > Plano Odonto </Divider>
+                                    <label>
+                                        Plano Titular Atual
+                                    </label>
+                                    <InputText className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+
+                                <div className="col-12 field">
+                                    <label>
+                                        Tipo de Operação
+                                    </label>
+                                    <Dropdown
+                                        value={operacaoSelecionadaPlano}
+                                        options={operacaoPlano}
+                                        className="w-full"
+                                        onChange={(e) => setOperacaoSelecionadaPlano(e.value)}
+                                    />
+                                </div>
+                                <div className="col-4 field">
+                                    <FieldName name='Data Exclusão' />
+                                    <Datepicker
+                                        className='w-full'
+                                    />
+                                </div>
+
+                                <Divider align="left" > Dependente </Divider>
+                                <div className="col-4 flex flex-column mb-2">
+                                    <InputText className="w-full" placeholder='Dependente 1'
+                                    />
+                                    <div className="col-3 field">
+                                        <input id="Manter" name="base" type="checkbox" value="S" />
+                                        <label>
+                                            Excluir
+                                        </label>
+                                    </div>
+                                    <InputText className="w-full" placeholder='Dependente 2'
+                                    />
+                                    <div className="col-3 field">
+                                        <input id="Manter" name="base" type="checkbox" value="S" />
+                                        <label>
+                                            Excluir
+                                        </label>
+                                    </div>
+                                    <InputText className="w-full" placeholder='Dependente 3'
+                                    />
+                                    <div className="col-3 field">
+                                        <input id="Manter" name="base" type="checkbox" value="S" />
+                                        <label>
+                                            Excluir
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </>
+                        }
+
+                        {/* VA/VR */}
+                        {
+                            beneficioSelecionado?.cod == 4 &&
+                            <>
+
+                                <Divider align="left" > VA / VR </Divider>
+
+
+                                <div className="col-12 field">
+                                    <label>
+                                        Tipo de Operação
+                                    </label>
+                                    <Dropdown
+                                        value={operacaoSelecionadaPlano}
+                                        options={operacaoPlano}
+                                        className="w-full"
+                                        onChange={(e) => setOperacaoSelecionadaPlano(e.value)}
+                                    />
+                                </div>
+
+                                <div className="col-12 field">
+                                    <label>
+                                        Codigo do Vale Anterior
+                                    </label>
+                                    <InputText className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field">
+                                    <label>
+                                        Tipo Vale
+                                    </label>
+                                    <InputText className="w-full" value={""}
+                                    />
+                                </div>
+                                <div className="col-6 field">
+                                    <label>
+                                        Quantidade Vales
+                                    </label>
+                                    <InputText className="w-full" value={""}
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Quantidade Dia útil
+                                    </label>
+                                    <InputText className="w-full" value={""}
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Quantidade Sábado
+                                    </label>
+                                    <InputText className="w-full" value={""}
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Quantidade Domingo
+                                    </label>
+                                    <InputText className="w-full" value={""}
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Quantidade Feriado
+                                    </label>
+                                    <InputText className="w-full" value={""}
+                                    />
+
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Codigo do Vale
+                                    </label>
+                                    <InputText className="w-full" value={""}
+                                        readonly
+                                    />
+                                </div>
+                                <div className="col-6 field">
+                                    <label>
+                                        Tipo Vale
+                                    </label>
+                                    <InputText className="w-full" value={""}
+                                    />
+                                </div>
+                                <div className="col-6 field">
+                                    <label>
+                                        Quantidade Vales
+                                    </label>
+                                    <InputText className="w-full" value={""}
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Quantidade Dia útil
+                                    </label>
+                                    <InputText className="w-full" value={""}
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Quantidade Sábado
+                                    </label>
+                                    <InputText className="w-full" value={""}
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Quantidade Domingo
+                                    </label>
+                                    <InputText className="w-full" value={""}
+                                    />
+                                </div>
+                                <div className="col-3 field">
+                                    <label>
+                                        Quantidade Feriado
+                                    </label>
+                                    <InputText className="w-full" value={""}
+                                    />
+                                </div>
+                            </>
+                        }
+
+                    </>
+                }
+
             </div>
         </div>
     )

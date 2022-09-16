@@ -13,7 +13,6 @@ import { InputTextarea } from 'primereact/inputtextarea'
 export default function Tarefa_2() {
 
     const { globalState } = useGlobalState()
-    console.log(globalState.variaveisProcesso)
 
     const infos = globalState.variaveisProcesso
 
@@ -25,8 +24,7 @@ export default function Tarefa_2() {
 
     const [observacao,setObservacao] = useState(infos?.observacao || '')
 
-    console.log(infos)
-    
+   
     const [beneficios] = useState(
         infos?.beneficios_JSON.beneficios
     )

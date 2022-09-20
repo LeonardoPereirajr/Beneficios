@@ -58,6 +58,7 @@ export default function Tarefa_1() {
     const [VTAtual, setVTAtual] = useState("")
 
     const [PlanoAtual, setPlanoSaude] = useState("")
+    const [DataInclusaoPlano,setInclusaoPlano] = useState("")
 
     useEffect(() => {
         getColaborador(globalState.usuario.subject).then((param) => {
@@ -72,11 +73,14 @@ export default function Tarefa_1() {
     }, [])
     useEffect(() => {
         getColaborador(globalState.usuario.subject).then((param) => {
-            setDados(param)
+            setPlanoSaude(param)
             getPlanoSaudeAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad)
                 .then((data) => {
-                    if (data.planos.nomevt) {
-                        setPlanoSaude(data.planos.nomevt)
+                    if (data.colaboradores.nompla) {
+                        setPlanoSaude(data.colaboradores.nompla)
+                    }
+                    if(data.colaboradores.mesinc){
+                        setInclusaoPlano(data.colaboradores.mesinc)
                     }
                 })
         })
@@ -577,7 +581,8 @@ export default function Tarefa_1() {
                                     <label>
                                         Plano Titular Atual + Data Inclusão
                                     </label>
-                                    <InputText className="w-full" value={PlanoAtual}
+                                    {console.log(dados)}
+                                    <InputText className="w-full" value={PlanoAtual +' | '+ DataInclusaoPlano }
                                         readonly
                                     />
                                 </div>

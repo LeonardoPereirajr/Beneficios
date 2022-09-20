@@ -37,12 +37,18 @@ export default async function getColaborador(user) {
                 numEmp: response.numemp,
                 tipCol: response.tipcol,
                 cargo: "Desenvolvedor",
-                escala: "24/8"
+                escala: response.nomesc,
+                endcep: response.endcep,
+                endrua: response.endrua,
+                endcpl: response.endcpl,
+                nombai: response.nombai,
+                nomcid: response.nomcid,
             },
             empresa: {
                 numEmp: response.numemp,
                 codFil: response.codfil,
-                nomFil: response.nomfil
+                nomFil: response.nomfil,
+                datfil: response.datfil
             }
         }
     } catch (error) {

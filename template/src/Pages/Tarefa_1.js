@@ -13,6 +13,7 @@ import { InputNumber } from 'primereact/inputnumber';
 import FieldName from '../components/FieldName';
 import { Datepicker } from '../components/Datepicker';
 import getEscalaAtualColaborador from '../Services/getEscalaAtualColaborador';
+import getPlanoSaudeAtualColaborador from '../Services/getPlanoSaudeAtualColaborador';
 
 
 export default function Tarefa_1() {
@@ -56,6 +57,8 @@ export default function Tarefa_1() {
 
     const [VTAtual, setVTAtual] = useState("")
 
+    const [PlanoAtual, setPlanoSaude] = useState("")
+
     useEffect(() => {
         getColaborador(globalState.usuario.subject).then((param) => {
             setDados(param)
@@ -67,6 +70,18 @@ export default function Tarefa_1() {
                 })
         })
     }, [])
+    useEffect(() => {
+        getColaborador(globalState.usuario.subject).then((param) => {
+            setDados(param)
+            getPlanoSaudeAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad)
+                .then((data) => {
+                    if (data.planos.nomevt) {
+                        setPlanoSaude(data.planos.nomevt)
+                    }
+                })
+        })
+    }, [])
+
     return (
         <div className="grid">
             {
@@ -95,9 +110,20 @@ export default function Tarefa_1() {
             <div className="col-12 field">
 
                 <label>
-                    Empresa \ Filial
+                    Histórico Atual
                 </label>
-                <InputText className="w-full" value={dados?.empresa.numEmp + '-' + dados?.empresa.codFil + '-' + dados?.empresa.nomFil}
+                {console.log(dados)}
+                <InputText className="w-full" value={dados?.empresa.datfil + ' | ' + dados?.empresa.numEmp + '-' + dados?.empresa.codFil + '-' + dados?.empresa.nomFil}
+                    readonly
+                />
+            </div>
+            <div className="col-12 field">
+
+                <label>
+                    Para qual Período Deseja Solicitar a Alteração?
+                </label>
+                {console.log(dados)}
+                <InputText className="w-full" value={dados?.empresa.datfil + ' | ' + dados?.empresa.numEmp + '-' + dados?.empresa.codFil + '-' + dados?.empresa.nomFil}
                     readonly
                 />
             </div>
@@ -129,10 +155,11 @@ export default function Tarefa_1() {
                                 onChange={(e) => setBeneficioSelecionado(e.value)}
                             />
                         </div>
+                        {/* Vale Transporte */}
+
                         {
                             beneficioSelecionado?.cod == 1 &&
                             <>
-                                {/* Vale Transporte */}
 
                                 <div className="col-12 field">
                                     <Divider align="left" > Vale Transporte </Divider>
@@ -540,18 +567,17 @@ export default function Tarefa_1() {
                             </>
                         }
 
+                        {/* Plano de saude */}
                         {
                             beneficioSelecionado?.cod == 2 &&
                             <>
-
-                                {/* PLANO DE SAUDE */}
 
                                 <div className="col-12 field">
                                     <Divider align="left" > Plano de Saude </Divider>
                                     <label>
                                         Plano Titular Atual + Data Inclusão
                                     </label>
-                                    <InputText className="w-full" value={""}
+                                    <InputText className="w-full" value={PlanoAtual}
                                         readonly
                                     />
                                 </div>
@@ -920,10 +946,28 @@ export default function Tarefa_1() {
                     </>
                 }
 
+
                 {
                     motivoSelecionado?.cod == 2 &&
                     <>
                         {/* Vale Transporte motivo 2 */}
+
+                        <div className="col-12 field">
+                            <label>
+                                Histórico Atual
+                            </label>
+                            <InputText className="w-full" value={dados?.empresa.datfil + ' | ' + dados?.usuario.escala}
+                                readonly
+                            />
+                        </div>
+                        <div className="col-12 field">
+                            <label>
+                                Para qual Período Deseja Solicitar a Alteração?
+                            </label>
+                            <InputText className="w-full" value={dados?.empresa.datfil + ' | ' + dados?.usuario.escala}
+                                readonly
+                            />
+                        </div>
 
                         <div className="col-12 field">
                             <Divider align="left" > Vale Transporte </Divider>
@@ -1335,6 +1379,56 @@ export default function Tarefa_1() {
                     motivoSelecionado?.cod == 3 &&
                     <>
                         {/* Vale Transporte motivo 3 */}
+
+                        <div className="col-12 field">
+                            <label>
+                                CEP
+                            </label>
+                            <InputText className="w-full" value={dados?.usuario.endcep}
+                                readonly
+                            />
+                        </div>
+                        <div className="col-12 field">
+                            <label>
+                                Tipo/Logradouro/Nº
+                            </label>
+                            <InputText className="w-full" value={dados?.usuario.endrua}
+                                readonly
+                            />
+                        </div>
+                        <div className="col-12 field">
+                            <label>
+                                Complemento
+                            </label>
+                            <InputText className="w-full" value={dados?.usuario.endcpl}
+                                readonly
+                            />
+                        </div>
+                        <div className="col-12 field">
+                            <label>
+                                Bairro
+                            </label>
+                            <InputText className="w-full" value={dados?.usuario.nombai}
+                                readonly
+                            />
+                        </div>
+                        <div className="col-12 field">
+                            <label>
+                                Cidade
+                            </label>
+                            <InputText className="w-full" value={dados?.usuario.nomcid}
+                                readonly
+                            />
+                        </div>
+                        <div className="col-12 flex flex-column mb-2">
+                            <label>
+                                Anexos
+                            </label>
+                            <InputText className="w-full" value={"Os anexos devem ser inseridos na Aba Anexos"}
+                                readonly
+                            />
+
+                        </div>
 
                         <div className="col-12 field">
                             <Divider align="left" > Vale Transporte </Divider>

@@ -19,9 +19,7 @@ export default function App({ data,info }) {
 
 
   function renderPage() {
-    console.log(tarefaAtiva)
     if (tarefaAtiva==1) {
-      console.log("Entrou")
       return <Tarefa_1 />
     }else if(tarefaAtiva==2){
       return <Tarefa_2/>

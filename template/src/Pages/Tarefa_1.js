@@ -2658,10 +2658,10 @@ export default function Tarefa_1() {
                                         Tipo de Operação
                                     </label>
                                     <Dropdown
-                                        value={operacaoSelecionadaPlano}
-                                        options={operacaoPlano}
+                                        value={operacaoSelecionadaVale}
+                                        options={operacaoVale}
                                         className="w-full"
-                                        onChange={(e) => setOperacaoSelecionadaPlano(e.value)}
+                                        onChange={(e) => setOperacaoSelecionadaVale(e.value)}
                                     />
                                 </div>
 

@@ -727,7 +727,7 @@ export default function Tarefa_1() {
                                 {
                                     operacaoSelecionadaPlano?.cod == 3 &&
                                     <>
-                                        <div className="col-6 field">
+                                        <div className="col-12 field">
                                             <label>
                                                 Plano Titular Atual
                                             </label>
@@ -735,13 +735,13 @@ export default function Tarefa_1() {
                                                 readonly
                                             />
                                         </div>
-                                        <div className="col-4 field">
+                                        <div className="col-12 field">
                                             <FieldName name='Data Inclusão' />
                                             <Datepicker
                                                 className='w-full'
                                             />
                                         </div>
-                                        <div className="col-6 field">
+                                        <div className="col-12 field">
                                             <FieldName name='Data Exclusão' />
                                             <Datepicker
                                                 className='w-full'
@@ -2381,13 +2381,13 @@ export default function Tarefa_1() {
                                                 readonly
                                             />
                                         </div>
-                                        <div className="col-4 field">
+                                        <div className="col-12 field">
                                             <FieldName name='Data Inclusão' />
                                             <Datepicker
                                                 className='w-full'
                                             />
                                         </div>
-                                        <div className="col-4 field">
+                                        <div className="col-12 field">
                                             <FieldName name='Data Exclusão' />
                                             <Datepicker
                                                 className='w-full'

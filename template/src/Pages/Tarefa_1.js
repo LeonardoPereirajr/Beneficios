@@ -46,10 +46,16 @@ export default function Tarefa_1() {
     ]
     const [operacaoSelecionada, setOperacaoSelecionada] = useState(null)
 
+    const operacaoVale = [
+        { label: 'Alterar', cod: 1 },
+    ]
+    const [operacaoSelecionadaVale, setOperacaoSelecionadaVale] = useState(null)
+
     const operacaoPlano = [
         { label: 'Incluir', cod: 1 },
-        { label: 'Incluir Dependente', cod: 2 },
-        { label: 'Excluir', cod: 3 },
+        { label: 'Alterar Titular + Dependentes', cod: 2 },
+        { label: 'Incluir Dependentes', cod: 3 },
+        { label: 'Excluir', cod: 4 },
     ]
     const [operacaoSelecionadaPlano, setOperacaoSelecionadaPlano] = useState(null)
 
@@ -57,8 +63,11 @@ export default function Tarefa_1() {
 
     const [VTAtual, setVTAtual] = useState("")
 
+    const [DataInclusaoVT, setInclusaoVT] = useState("")
+
     const [PlanoAtual, setPlanoSaude] = useState("")
-    const [DataInclusaoPlano,setInclusaoPlano] = useState("")
+
+    const [DataInclusaoPlano, setInclusaoPlano] = useState("")
 
     useEffect(() => {
         getColaborador(globalState.usuario.subject).then((param) => {
@@ -67,6 +76,9 @@ export default function Tarefa_1() {
                 .then((data) => {
                     if (data.escalas.nomevt) {
                         setVTAtual(data.escalas.nomevt)
+                    }
+                    if (data.escalas.inievt) {
+                        setInclusaoVT(data.escalas.inievt)
                     }
                 })
         })
@@ -79,7 +91,7 @@ export default function Tarefa_1() {
                     if (data.colaboradores.nompla) {
                         setPlanoSaude(data.colaboradores.nompla)
                     }
-                    if(data.colaboradores.mesinc){
+                    if (data.colaboradores.mesinc) {
                         setInclusaoPlano(data.colaboradores.mesinc)
                     }
                 })
@@ -160,7 +172,6 @@ export default function Tarefa_1() {
                             />
                         </div>
                         {/* Vale Transporte */}
-
                         {
                             beneficioSelecionado?.cod == 1 &&
                             <>
@@ -554,9 +565,11 @@ export default function Tarefa_1() {
                                     operacaoSelecionada?.cod == 3 &&
                                     <>
                                         <div className="col-12 field">
-                                            <FieldName required name='Data Início' />
-                                            <Datepicker
-                                                className='w-full'
+                                            <FieldName name='Data Início' />
+                                            <InputText
+                                                readOnly
+                                                className="w-full"
+                                                value={DataInclusaoVT}
                                             />
                                         </div>
                                         <div className="col-12 field">
@@ -582,7 +595,7 @@ export default function Tarefa_1() {
                                         Plano Titular Atual + Data Inclusão
                                     </label>
                                     {console.log(dados)}
-                                    <InputText className="w-full" value={PlanoAtual +' | '+ DataInclusaoPlano }
+                                    <InputText className="w-full" value={PlanoAtual + ' | ' + DataInclusaoPlano}
                                         readonly
                                     />
                                 </div>
@@ -600,13 +613,69 @@ export default function Tarefa_1() {
                                 </div>
 
                                 {
-                                    operacaoSelecionada?.cod == 1 &&
+                                    operacaoSelecionadaPlano?.cod == 1 &&
                                     <>
                                         <div className="col-12 field">
                                             <label>
                                                 Plano Titular
                                             </label>
                                             <InputText className="w-full" value={""}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-12 field">
+                                            <FieldName name='Data Inclusão' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+                                        <div className="col-12 field">
+                                            <FieldName name='Data Exclusão' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+
+                                        <Divider align="left" > Dependente </Divider>
+                                        <div className="col-4 flex flex-column mb-2">
+                                            <InputText className="w-full" placeholder='Dependente 1'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 2'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 3'
+                                            />
+                                        </div>
+
+                                        <div className="col-12 field">
+                                            <label>
+                                                Marque ou desmarque quem será incluído ou excluído do Plano.
+                                            </label>
+                                        </div>
+                                        <div className="col-3 field">
+                                            <input id="Manter" name="base" type="radio" value="S" />
+                                            <label>
+                                                Manter dependente no Plano
+                                            </label>
+                                            <label>
+                                                <input id="Incluir" name="base" type="radio" value="S" />
+                                                Esta ação irá incluir dependente no Plano
+                                            </label>
+                                            <label>
+                                                <input id="Excluir" name="base" type="radio" value="S" />
+                                                Esta ação irá excluir dependente no Plano
+                                            </label>
+                                        </div>
+                                    </>
+                                }
+
+                                {
+                                    operacaoSelecionadaPlano?.cod == 2 &&
+                                    <>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Plano Titular
+                                            </label>
+                                            <InputText className="w-full" value={PlanoAtual + ' | ' + DataInclusaoPlano}
                                                 readonly
                                             />
                                         </div>
@@ -656,69 +725,63 @@ export default function Tarefa_1() {
                                 }
 
                                 {
-                                    operacaoSelecionada?.cod == 2 &&
-                                    <>
-                                        <div className="col-12 field">
-                                            <label>
-                                                Plano Titular
-                                            </label>
-                                            <InputText className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-4 field">
-                                            <FieldName name='Data Inclusão' />
-                                            <Datepicker
-                                                className='w-full'
-                                            />
-                                        </div>
-                                        <div className="col-4 field">
-                                            <FieldName name='Data Exclusão' />
-                                            <Datepicker
-                                                className='w-full'
-                                            />
-                                        </div>
-
-                                        <Divider align="left" > Dependente </Divider>
-                                        <div className="col-4 flex flex-column mb-2">
-                                            <InputText className="w-full" placeholder='Dependente 1'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 2'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 3'
-                                            />
-                                        </div>
-
-                                        <div className="col-12 field">
-                                            <label>
-                                                Marque ou desmarque quem será incluído ou excluído do Plano.
-                                            </label>
-                                        </div>
-                                        <div className="col-3 field">
-                                            <input id="Manter" name="base" type="radio" value="S" />
-                                            <label>
-                                                Manter dependente no Plano
-                                            </label>
-                                            <label>
-                                                <input id="Incluir" name="base" type="radio" value="S" />
-                                                Esta ação irá incluir dependente no Plano
-                                            </label>
-                                            <label>
-                                                <input id="Excluir" name="base" type="radio" value="S" />
-                                                Esta ação irá excluir dependente no Plano
-                                            </label>
-                                        </div>
-                                    </>
-                                }
-
-                                {
-                                    operacaoSelecionada?.cod == 3 &&
+                                    operacaoSelecionadaPlano?.cod == 3 &&
                                     <>
                                         <div className="col-6 field">
                                             <label>
                                                 Plano Titular Atual
                                             </label>
-                                            <InputText className="w-full" value={""}
+                                            <InputText className="w-full" value={PlanoAtual + ' | ' + DataInclusaoPlano}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName name='Data Inclusão' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+                                        <div className="col-6 field">
+                                            <FieldName name='Data Exclusão' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+
+                                        <Divider align="left" > Dependente </Divider>
+                                        <div className="col-4 flex flex-column mb-2">
+                                            <InputText className="w-full" placeholder='Dependente 1'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 2'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 3'
+                                            />
+                                        </div>
+
+                                        <div className="col-3 field">
+                                            <input id="Excluir1" name="base" type="radio" value="S" />
+                                            <label>
+                                                Excluir
+                                            </label>
+                                            <label>
+                                                <input id="Excluir2" name="base" type="radio" value="S" />
+                                                Excluir
+                                            </label>
+                                            <label>
+                                                <input id="Excluir3" name="base" type="radio" value="S" />
+                                                Excluir
+                                            </label>
+                                        </div>
+                                    </>
+                                }
+                                {
+                                    operacaoSelecionadaPlano?.cod == 4 &&
+                                    <>
+                                        <div className="col-6 field">
+                                            <label>
+                                                Plano Titular Atual
+                                            </label>
+                                            <InputText className="w-full" value={PlanoAtual + ' | ' + DataInclusaoPlano}
                                                 readonly
                                             />
                                         </div>
@@ -837,10 +900,10 @@ export default function Tarefa_1() {
                                         Tipo de Operação
                                     </label>
                                     <Dropdown
-                                        value={operacaoSelecionadaPlano}
-                                        options={operacaoPlano}
+                                        value={operacaoSelecionadaVale}
+                                        options={operacaoVale}
                                         className="w-full"
-                                        onChange={(e) => setOperacaoSelecionadaPlano(e.value)}
+                                        onChange={(e) => setOperacaoSelecionadaVale(e.value)}
                                     />
                                 </div>
 
@@ -1363,9 +1426,11 @@ export default function Tarefa_1() {
                             operacaoSelecionada?.cod == 3 &&
                             <>
                                 <div className="col-12 field">
-                                    <FieldName required name='Data Início' />
-                                    <Datepicker
-                                        className='w-full'
+                                    <FieldName name='Data Início' />
+                                    <InputText
+                                        readOnly
+                                        className="w-full"
+                                        value={DataInclusaoVT}
                                     />
                                 </div>
                                 <div className="col-12 field">
@@ -1379,6 +1444,7 @@ export default function Tarefa_1() {
                         }
                     </>
                 }
+
 
                 {
                     motivoSelecionado?.cod == 3 &&
@@ -1824,9 +1890,11 @@ export default function Tarefa_1() {
                             operacaoSelecionada?.cod == 3 &&
                             <>
                                 <div className="col-12 field">
-                                    <FieldName required name='Data Início' />
-                                    <Datepicker
-                                        className='w-full'
+                                    <FieldName name='Data Início' />
+                                    <InputText
+                                        readOnly
+                                        className="w-full"
+                                        value={DataInclusaoVT}
                                     />
                                 </div>
                                 <div className="col-12 field">
@@ -1840,6 +1908,7 @@ export default function Tarefa_1() {
                         }
                     </>
                 }
+
 
                 {
                     motivoSelecionado?.cod == 4 &&
@@ -2253,9 +2322,11 @@ export default function Tarefa_1() {
                                     operacaoSelecionada?.cod == 3 &&
                                     <>
                                         <div className="col-12 field">
-                                            <FieldName required name='Data Início' />
-                                            <Datepicker
-                                                className='w-full'
+                                            <FieldName name='Data Início' />
+                                            <InputText
+                                                readOnly
+                                                className="w-full"
+                                                value={DataInclusaoVT}
                                             />
                                         </div>
                                         <div className="col-12 field">
@@ -2281,7 +2352,8 @@ export default function Tarefa_1() {
                                     <label>
                                         Plano Titular Atual + Data Inclusão
                                     </label>
-                                    <InputText className="w-full" value={""}
+                                    {console.log(dados)}
+                                    <InputText className="w-full" value={PlanoAtual + ' | ' + DataInclusaoPlano}
                                         readonly
                                     />
                                 </div>
@@ -2299,7 +2371,7 @@ export default function Tarefa_1() {
                                 </div>
 
                                 {
-                                    operacaoSelecionada?.cod == 1 &&
+                                    operacaoSelecionadaPlano?.cod == 1 &&
                                     <>
                                         <div className="col-12 field">
                                             <label>
@@ -2355,7 +2427,7 @@ export default function Tarefa_1() {
                                 }
 
                                 {
-                                    operacaoSelecionada?.cod == 2 &&
+                                    operacaoSelecionadaPlano?.cod == 2 &&
                                     <>
                                         <div className="col-12 field">
                                             <label>
@@ -2410,14 +2482,64 @@ export default function Tarefa_1() {
                                     </>
                                 }
 
-                                {
-                                    operacaoSelecionada?.cod == 3 &&
+{
+                                    operacaoSelecionadaPlano?.cod == 3 &&
                                     <>
                                         <div className="col-6 field">
                                             <label>
                                                 Plano Titular Atual
                                             </label>
-                                            <InputText className="w-full" value={""}
+                                            <InputText className="w-full" value={PlanoAtual + ' | ' + DataInclusaoPlano}
+                                                readonly
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName name='Data Inclusão' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+                                        <div className="col-6 field">
+                                            <FieldName name='Data Exclusão' />
+                                            <Datepicker
+                                                className='w-full'
+                                            />
+                                        </div>
+
+                                        <Divider align="left" > Dependente </Divider>
+                                        <div className="col-4 flex flex-column mb-2">
+                                            <InputText className="w-full" placeholder='Dependente 1'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 2'
+                                            />
+                                            <InputText className="w-full" placeholder='Dependente 3'
+                                            />
+                                        </div>
+
+                                        <div className="col-3 field">
+                                            <input id="Excluir1" name="base" type="radio" value="S" />
+                                            <label>
+                                                Excluir
+                                            </label>
+                                            <label>
+                                                <input id="Excluir2" name="base" type="radio" value="S" />
+                                                Excluir
+                                            </label>
+                                            <label>
+                                                <input id="Excluir3" name="base" type="radio" value="S" />
+                                                Excluir
+                                            </label>
+                                        </div>
+                                    </>
+                                }
+                                {
+                                    operacaoSelecionadaPlano?.cod == 4 &&
+                                    <>
+                                        <div className="col-6 field">
+                                            <label>
+                                                Plano Titular Atual
+                                            </label>
+                                            <InputText className="w-full" value={PlanoAtual + ' | ' + DataInclusaoPlano}
                                                 readonly
                                             />
                                         </div>

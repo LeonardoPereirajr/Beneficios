@@ -20,11 +20,10 @@ export function saveData(data) {
             empresa: `${taskData.empresa.numEmp} - ${taskData.empresa.nomFil}`,
             filial: `${taskData.empresa.numEmp} - ${taskData.empresa.nomFil}`,
             data: new Date(),
-            cargo: taskData.usuario.cargo,
             escala: taskData.usuario.escala,
             beneficios_JSON: JSON.stringify(taskData),
             dados: `Empresa ${taskData.empresa.nomFil} - ${taskData.empresa.numEmp} - ${taskData.empresa.nomFil} - Colaborador ${taskData.usuario?.nomFun} - ${taskData.usuario?.nomFun}`,
-           descricao: taskData.descricao
+            descricao: taskData.descricao
         }
         return {
             formData: retorno

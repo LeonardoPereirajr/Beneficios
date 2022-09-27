@@ -6,7 +6,7 @@ export default async function getPlanoSaudeAtualColaborador(numemp,tipcol,numcad
     myHeaders.append("Content-Type", "aplication/json");
 
     var raw = JSON.stringify({
-        numemp,tipcol,numcad:14000355
+        numemp,tipcol,numcad:13000063
     });
 
     var requestOptions = {

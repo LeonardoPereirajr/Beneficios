@@ -14,6 +14,8 @@ import FieldName from '../components/FieldName';
 import { Datepicker } from '../components/Datepicker';
 import getEscalaAtualColaborador from '../Services/getEscalaAtualColaborador';
 import getPlanoSaudeAtualColaborador from '../Services/getPlanoSaudeAtualColaborador';
+import getDependentesColaborador from '../Services/getDependentesColaborador';
+import ContentDivisor from '../components/ContentDivisor';
 
 
 export default function Tarefa_1() {
@@ -21,6 +23,11 @@ export default function Tarefa_1() {
     const { globalState } = useGlobalState()
 
     const info = globalState.variaveisProcesso
+
+    const initialState = {
+        lider: null,
+
+    }
 
     const motivoSolicitacao = [
         { label: 'Alteração de Unidade', cod: 1 },
@@ -69,10 +76,16 @@ export default function Tarefa_1() {
 
     const [DataInclusaoPlano, setInclusaoPlano] = useState("")
 
+    const [dependente, setDependentes] = useState([])
+
+    const [linhasTransporte, setLinhasTransportes] = useState([{ linha: "teste", cartao: "123" }])
+
+    const [state, setState] = useState(initialState);
+
     useEffect(() => {
         getColaborador(globalState.usuario.subject).then((param) => {
             setDados(param)
-            getEscalaAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad)
+            getEscalaAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad, param.usuario.dependentes)
                 .then((data) => {
                     if (data.escalas.nomevt) {
                         setVTAtual(data.escalas.nomevt)
@@ -83,6 +96,20 @@ export default function Tarefa_1() {
                 })
         })
     }, [])
+
+    useEffect(() => {
+        getColaborador(globalState.usuario.subject).then((param) => {
+            setDependentes(param)
+            getDependentesColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad)
+                .then((d) => {
+                    console.log(d)
+                    if (d.dependentes.length > 0) {
+                        setDependentes(d.dependentes)
+                    }
+                })
+        })
+    }, [])
+
     useEffect(() => {
         getColaborador(globalState.usuario.subject).then((param) => {
             setPlanoSaude(param)
@@ -97,6 +124,10 @@ export default function Tarefa_1() {
                 })
         })
     }, [])
+
+    useEffect(() => {
+        GLOBAL.tarefa_1 = state;
+    }, [state])
 
     return (
         <div className="grid">
@@ -114,9 +145,8 @@ export default function Tarefa_1() {
                 </div>
             }
             <div className="col-12 field">
-                <label>
-                    COLABORADOR
-                </label>
+                <ContentDivisor content={"COLABORADOR"}
+                    icon={"pi pi-user"} />
                 <InputText className="w-full"
                     value={dados?.usuario.nomFun}
                     readonly
@@ -125,27 +155,24 @@ export default function Tarefa_1() {
 
             <div className="col-12 field">
 
-                <label>
-                    Histórico Atual
-                </label>
-                {console.log(dados)}
+                <ContentDivisor content={"Histórico Atual"}
+                />
                 <InputText className="w-full" value={dados?.empresa.datfil + ' | ' + dados?.empresa.numEmp + '-' + dados?.empresa.codFil + '-' + dados?.empresa.nomFil}
                     readonly
                 />
             </div>
             <div className="col-12 field">
 
-                <label>
-                    Para qual Período Deseja Solicitar a Alteração?
-                </label>
-                {console.log(dados)}
+                <ContentDivisor content={"Para qual Período Deseja Solicitar a Alteração?"}
+                />
+
                 <InputText className="w-full" value={dados?.empresa.datfil + ' | ' + dados?.empresa.numEmp + '-' + dados?.empresa.codFil + '-' + dados?.empresa.nomFil}
                     readonly
                 />
             </div>
 
-            <Divider align="left" > BENEFÍCIOS </Divider>
-
+            <ContentDivisor content={"BENEFICIOS"}
+                icon={"pi pi-user"} />
 
             <div className="col-12 field">
                 <label> Escolha o motivo da solicitação</label>
@@ -160,7 +187,7 @@ export default function Tarefa_1() {
             <div className="grid px-2" style={{ display: motivoSelecionado ? "" : "none" }}>
 
                 {
-                    motivoSelecionado?.cod == 1 &&
+                    motivoSelecionado?.cod === 1 &&
                     <>
                         <div className="col-12 field">
                             <label> Escolha o beneficio. </label>
@@ -173,11 +200,12 @@ export default function Tarefa_1() {
                         </div>
                         {/* Vale Transporte */}
                         {
-                            beneficioSelecionado?.cod == 1 &&
+                            beneficioSelecionado?.cod === 1 &&
                             <>
 
                                 <div className="col-12 field">
-                                    <Divider align="left" > Vale Transporte </Divider>
+                                    <ContentDivisor content={"Vale Transporte"}
+                                    />
                                     <label>
                                         Escala Vale de transporte Atual
                                     </label>
@@ -197,6 +225,7 @@ export default function Tarefa_1() {
                                     />
                                 </div>
 
+
                                 {
                                     operacaoSelecionada?.cod == 1 &&
                                     <>
@@ -205,8 +234,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Nome da Operadora de Vale Transporte
                                             </label>
-                                            <InputText className="w-full" value={"Empresa XPTO"}
-                                                readonly
+                                            <InputText className="w-full" value={state.nomevt}
                                             />
                                         </div>
 
@@ -214,8 +242,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Numero da Linha
                                             </label>
-                                            <InputNumber className="w-full" value={999999}
-                                                readonly
+                                            <InputNumber className="w-full" value={state.codlin}
                                             />
                                         </div>
 
@@ -223,23 +250,21 @@ export default function Tarefa_1() {
                                             <label>
                                                 Tipo de Transporte
                                             </label>
-                                            <InputText className="w-full" value={'Onibus,Metro,Trem,Etc.'}
-                                                readonly
+                                            <InputText className="w-full" value={state.tipo}
                                             />
                                         </div>
                                         <div className="col-12 field">
                                             <label>
                                                 Valor da Tarifa
                                             </label>
-                                            <InputNumber className="w-full" value={99.99}
-                                                readonly
+                                            <InputNumber className="w-full" value={state.valor}
                                             />
                                         </div>
                                         <div className="col-12 field">
                                             <label>
                                                 Quantidade Utilizada para Ida
                                             </label>
-                                            <InputNumber className="w-full" value={1}
+                                            <InputNumber className="w-full" value={state.qtdida}
                                                 readonly
                                             />
                                         </div>
@@ -247,7 +272,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Quantidade Utilizada para Volta
                                             </label>
-                                            <InputNumber className="w-full" value={1}
+                                            <InputNumber className="w-full" value={state.qtdvolta}
                                                 readonly
                                             />
                                         </div>
@@ -256,7 +281,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Escala Vale Transporte
                                             </label>
-                                            <InputNumber className="w-full" value={1}
+                                            <InputNumber className="w-full" value={state.esc}
                                                 readonly
                                             />
                                         </div>
@@ -274,121 +299,46 @@ export default function Tarefa_1() {
                                                 inputClassName='obrigatorio'
                                             />
                                         </div>
-                                        <Divider align="left" > GRID </Divider>
+                                        <ContentDivisor content={"LINHA / CARTÃO"}
+                                        />
 
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 1
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 2
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 3
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 4
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 5
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 6
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
+                                        {
+                                            linhasTransporte.map(l => (
+                                                <>
+                                                    <div className="col-3 field">
+                                                        <label>
+                                                            Linha 1
+                                                        </label>
+                                                        <InputNumber className="w-full" value={l.linha}
+                                                            readonly
+                                                        />
+                                                    </div>
+                                                    <div className="col-3 field">
+                                                        <label>
+                                                            Numero do Cartão
+                                                        </label>
+                                                        <InputNumber className="w-full" value={l.cartao}
+                                                            readonly
+                                                        />
+                                                    </div>
+                                                    <div className="col-6 field" />
+                                                </>
+                                            ))
+                                        }
+                                        <Button> Nova linha
+
+                                        </Button>
                                     </>
                                 }
                                 {
-                                    operacaoSelecionada?.cod == 2 &&
+                                    operacaoSelecionada?.cod === 2 &&
                                     <>
 
                                         <div className="col-12 field">
                                             <label>
                                                 Nome da Operadora de Vale Transporte
                                             </label>
-                                            <InputText className="w-full" value={"Empresa XPTO"}
-                                                readonly
+                                            <InputText className="w-full" value={state.nomevt}
                                             />
                                         </div>
 
@@ -396,8 +346,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Numero da Linha
                                             </label>
-                                            <InputNumber className="w-full" value={999999}
-                                                readonly
+                                            <InputNumber className="w-full" value={state.codlin}
                                             />
                                         </div>
 
@@ -405,23 +354,21 @@ export default function Tarefa_1() {
                                             <label>
                                                 Tipo de Transporte
                                             </label>
-                                            <InputText className="w-full" value={'Onibus,Metro,Trem,Etc.'}
-                                                readonly
+                                            <InputText className="w-full" value={state.tipo}
                                             />
                                         </div>
                                         <div className="col-12 field">
                                             <label>
                                                 Valor da Tarifa
                                             </label>
-                                            <InputNumber className="w-full" value={99.99}
-                                                readonly
+                                            <InputNumber className="w-full" value={state.valor}
                                             />
                                         </div>
                                         <div className="col-12 field">
                                             <label>
                                                 Quantidade Utilizada para Ida
                                             </label>
-                                            <InputNumber className="w-full" value={1}
+                                            <InputNumber className="w-full" value={state.qtdida}
                                                 readonly
                                             />
                                         </div>
@@ -429,7 +376,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Quantidade Utilizada para Volta
                                             </label>
-                                            <InputNumber className="w-full" value={1}
+                                            <InputNumber className="w-full" value={state.qtdvolta}
                                                 readonly
                                             />
                                         </div>
@@ -438,7 +385,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Escala Vale Transporte
                                             </label>
-                                            <InputNumber className="w-full" value={1}
+                                            <InputNumber className="w-full" value={state.esc}
                                                 readonly
                                             />
                                         </div>
@@ -456,109 +403,35 @@ export default function Tarefa_1() {
                                                 inputClassName='obrigatorio'
                                             />
                                         </div>
-                                        <Divider align="left" > GRID </Divider>
+                                        <ContentDivisor content={"LINHA / CARTÃO"}
+                                        />
 
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 1
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 2
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 3
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 4
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 5
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 6
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
+                                        {
+                                            linhasTransporte.map(l => (
+                                                <>
+                                                    <div className="col-3 field">
+                                                        <label>
+                                                            Linha 1
+                                                        </label>
+                                                        <InputNumber className="w-full" value={l.linha}
+                                                            readonly
+                                                        />
+                                                    </div>
+                                                    <div className="col-3 field">
+                                                        <label>
+                                                            Numero do Cartão
+                                                        </label>
+                                                        <InputNumber className="w-full" value={l.cartao}
+                                                            readonly
+                                                        />
+                                                    </div>
+                                                    <div className="col-6 field" />
+                                                </>
+                                            ))
+                                        }
+                                        <Button> Nova linha
+
+                                        </Button>
                                     </>
                                 }
                                 {
@@ -586,7 +459,7 @@ export default function Tarefa_1() {
 
                         {/* Plano de saude */}
                         {
-                            beneficioSelecionado?.cod == 2 &&
+                            beneficioSelecionado?.cod === 2 &&
                             <>
 
                                 <div className="col-12 field">
@@ -613,7 +486,7 @@ export default function Tarefa_1() {
                                 </div>
 
                                 {
-                                    operacaoSelecionadaPlano?.cod == 1 &&
+                                    operacaoSelecionadaPlano?.cod === 1 &&
                                     <>
                                         <div className="col-12 field">
                                             <label>
@@ -637,15 +510,16 @@ export default function Tarefa_1() {
                                         </div>
 
                                         <Divider align="left" > Dependente </Divider>
-                                        <div className="col-4 flex flex-column mb-2">
-                                            <InputText className="w-full" placeholder='Dependente 1'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 2'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 3'
-                                            />
-                                        </div>
+                                        {
+                                            dependente.length > 0 && dependente?.map(dep => (
+                                                <div className="col-4 flex flex-column mb-2">
+                                                    <InputText className="w-full" value={dep.nomdep}
+                                                        readonly
+                                                    />
+                                                </div>
+                                            ))
 
+                                        }
                                         <div className="col-12 field">
                                             <label>
                                                 Marque ou desmarque quem será incluído ou excluído do Plano.
@@ -669,7 +543,7 @@ export default function Tarefa_1() {
                                 }
 
                                 {
-                                    operacaoSelecionadaPlano?.cod == 2 &&
+                                    operacaoSelecionadaPlano?.cod === 2 &&
                                     <>
                                         <div className="col-12 field">
                                             <label>
@@ -679,29 +553,31 @@ export default function Tarefa_1() {
                                                 readonly
                                             />
                                         </div>
-                                        <div className="col-4 field">
+                                        <div className="col-12 field">
                                             <FieldName name='Data Inclusão' />
                                             <Datepicker
                                                 className='w-full'
                                             />
                                         </div>
-                                        <div className="col-4 field">
+                                        <div className="col-12 field">
                                             <FieldName name='Data Exclusão' />
                                             <Datepicker
                                                 className='w-full'
+                                                readonly
                                             />
                                         </div>
 
                                         <Divider align="left" > Dependente </Divider>
-                                        <div className="col-4 flex flex-column mb-2">
-                                            <InputText className="w-full" placeholder='Dependente 1'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 2'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 3'
-                                            />
-                                        </div>
+                                        {
+                                            dependente.length > 0 && dependente?.map(dep => (
+                                                <div className="col-4 flex flex-column mb-2">
+                                                    <InputText className="w-full" value={dep.nomdep}
+                                                        readonly
+                                                    />
+                                                </div>
+                                            ))
 
+                                        }
                                         <div className="col-12 field">
                                             <label>
                                                 Marque ou desmarque quem será incluído ou excluído do Plano.
@@ -725,7 +601,7 @@ export default function Tarefa_1() {
                                 }
 
                                 {
-                                    operacaoSelecionadaPlano?.cod == 3 &&
+                                    operacaoSelecionadaPlano?.cod === 3 &&
                                     <>
                                         <div className="col-12 field">
                                             <label>
@@ -745,37 +621,32 @@ export default function Tarefa_1() {
                                             <FieldName name='Data Exclusão' />
                                             <Datepicker
                                                 className='w-full'
+                                                readonly
                                             />
                                         </div>
 
                                         <Divider align="left" > Dependente </Divider>
-                                        <div className="col-4 flex flex-column mb-2">
-                                            <InputText className="w-full" placeholder='Dependente 1'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 2'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 3'
-                                            />
-                                        </div>
+                                        {
+                                            dependente.length > 0 && dependente?.map(dep => (
+                                                <div className="col-4 flex flex-column mb-2">
+                                                    <InputText className="w-full" value={dep.nomdep}
+                                                        readonly
+                                                    />
+                                                </div>
+                                            ))
+
+                                        }
 
                                         <div className="col-3 field">
-                                            <input id="Excluir1" name="base" type="radio" value="S" />
+                                            <input id="Excluir" name="base" type="radio" value="S" />
                                             <label>
-                                                Excluir
-                                            </label>
-                                            <label>
-                                                <input id="Excluir2" name="base" type="radio" value="S" />
-                                                Excluir
-                                            </label>
-                                            <label>
-                                                <input id="Excluir3" name="base" type="radio" value="S" />
                                                 Excluir
                                             </label>
                                         </div>
                                     </>
                                 }
                                 {
-                                    operacaoSelecionadaPlano?.cod == 4 &&
+                                    operacaoSelecionadaPlano?.cod === 4 &&
                                     <>
                                         <div className="col-6 field">
                                             <label>
@@ -793,26 +664,20 @@ export default function Tarefa_1() {
                                         </div>
 
                                         <Divider align="left" > Dependente </Divider>
-                                        <div className="col-4 flex flex-column mb-2">
-                                            <InputText className="w-full" placeholder='Dependente 1'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 2'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 3'
-                                            />
-                                        </div>
+                                        {
+                                            dependente.length > 0 && dependente?.map(dep => (
+                                                <div className="col-4 flex flex-column mb-2">
+                                                    <InputText className="w-full" value={dep.nomdep}
+                                                        readonly
+                                                    />
+                                                </div>
+                                            ))
+
+                                        }
 
                                         <div className="col-3 field">
-                                            <input id="Excluir1" name="base" type="radio" value="S" />
+                                            <input id="Excluir" name="base" type="radio" value="S" />
                                             <label>
-                                                Excluir
-                                            </label>
-                                            <label>
-                                                <input id="Excluir2" name="base" type="radio" value="S" />
-                                                Excluir
-                                            </label>
-                                            <label>
-                                                <input id="Excluir3" name="base" type="radio" value="S" />
                                                 Excluir
                                             </label>
                                         </div>
@@ -825,7 +690,7 @@ export default function Tarefa_1() {
                         {/* PLANO ODONTO */}
 
                         {
-                            beneficioSelecionado?.cod == 3 &&
+                            beneficioSelecionado?.cod === 3 &&
                             <>
 
                                 <div className="col-12 field">
@@ -857,39 +722,23 @@ export default function Tarefa_1() {
                                 </div>
 
                                 <Divider align="left" > Dependente </Divider>
-                                <div className="col-4 flex flex-column mb-2">
-                                    <InputText className="w-full" placeholder='Dependente 1'
-                                    />
-                                    <div className="col-3 field">
-                                        <input id="Manter" name="base" type="checkbox" value="S" />
-                                        <label>
-                                            Excluir
-                                        </label>
-                                    </div>
-                                    <InputText className="w-full" placeholder='Dependente 2'
-                                    />
-                                    <div className="col-3 field">
-                                        <input id="Manter" name="base" type="checkbox" value="S" />
-                                        <label>
-                                            Excluir
-                                        </label>
-                                    </div>
-                                    <InputText className="w-full" placeholder='Dependente 3'
-                                    />
-                                    <div className="col-3 field">
-                                        <input id="Manter" name="base" type="checkbox" value="S" />
-                                        <label>
-                                            Excluir
-                                        </label>
-                                    </div>
-                                </div>
+                                {
+                                    dependente.length > 0 && dependente?.map(dep => (
+                                        <div className="col-4 flex flex-column mb-2">
+                                            <InputText className="w-full" value={dep.nomdep}
+                                                readonly
+                                            />
+                                        </div>
+                                    ))
+
+                                }
 
                             </>
                         }
 
                         {/* VA/VR */}
                         {
-                            beneficioSelecionado?.cod == 4 &&
+                            beneficioSelecionado?.cod === 4 &&
                             <>
 
                                 <Divider align="left" > VA / VR </Divider>
@@ -1016,7 +865,7 @@ export default function Tarefa_1() {
 
 
                 {
-                    motivoSelecionado?.cod == 2 &&
+                    motivoSelecionado?.cod === 2 &&
                     <>
                         {/* Vale Transporte motivo 2 */}
 
@@ -1066,8 +915,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Nome da Operadora de Vale Transporte
                                     </label>
-                                    <InputText className="w-full" value={"Empresa XPTO"}
-                                        readonly
+                                    <InputText className="w-full" value={state.nomevt}
                                     />
                                 </div>
 
@@ -1075,8 +923,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Numero da Linha
                                     </label>
-                                    <InputNumber className="w-full" value={999999}
-                                        readonly
+                                    <InputNumber className="w-full" value={state.codlin}
                                     />
                                 </div>
 
@@ -1084,23 +931,21 @@ export default function Tarefa_1() {
                                     <label>
                                         Tipo de Transporte
                                     </label>
-                                    <InputText className="w-full" value={'Onibus,Metro,Trem,Etc.'}
-                                        readonly
+                                    <InputText className="w-full" value={state.tipo}
                                     />
                                 </div>
                                 <div className="col-12 field">
                                     <label>
                                         Valor da Tarifa
                                     </label>
-                                    <InputNumber className="w-full" value={99.99}
-                                        readonly
+                                    <InputNumber className="w-full" value={state.valor}
                                     />
                                 </div>
                                 <div className="col-12 field">
                                     <label>
                                         Quantidade Utilizada para Ida
                                     </label>
-                                    <InputNumber className="w-full" value={1}
+                                    <InputNumber className="w-full" value={state.qtdida}
                                         readonly
                                     />
                                 </div>
@@ -1108,7 +953,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Quantidade Utilizada para Volta
                                     </label>
-                                    <InputNumber className="w-full" value={1}
+                                    <InputNumber className="w-full" value={state.qtdvolta}
                                         readonly
                                     />
                                 </div>
@@ -1117,7 +962,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Escala Vale Transporte
                                     </label>
-                                    <InputNumber className="w-full" value={1}
+                                    <InputNumber className="w-full" value={state.esc}
                                         readonly
                                     />
                                 </div>
@@ -1135,109 +980,35 @@ export default function Tarefa_1() {
                                         inputClassName='obrigatorio'
                                     />
                                 </div>
-                                <Divider align="left" > GRID </Divider>
+                                <ContentDivisor content={"LINHA / CARTÃO"}
+                                />
 
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 1
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 2
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 3
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 4
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 5
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 6
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
+                                {
+                                    linhasTransporte.map(l => (
+                                        <>
+                                            <div className="col-3 field">
+                                                <label>
+                                                    Linha 1
+                                                </label>
+                                                <InputNumber className="w-full" value={l.linha}
+                                                    readonly
+                                                />
+                                            </div>
+                                            <div className="col-3 field">
+                                                <label>
+                                                    Numero do Cartão
+                                                </label>
+                                                <InputNumber className="w-full" value={l.cartao}
+                                                    readonly
+                                                />
+                                            </div>
+                                            <div className="col-6 field" />
+                                        </>
+                                    ))
+                                }
+                                <Button> Nova linha
+
+                                </Button>
                             </>
                         }
                         {
@@ -1248,8 +1019,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Nome da Operadora de Vale Transporte
                                     </label>
-                                    <InputText className="w-full" value={"Empresa XPTO"}
-                                        readonly
+                                    <InputText className="w-full" value={state.nomevt}
                                     />
                                 </div>
 
@@ -1257,8 +1027,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Numero da Linha
                                     </label>
-                                    <InputNumber className="w-full" value={999999}
-                                        readonly
+                                    <InputNumber className="w-full" value={state.codlin}
                                     />
                                 </div>
 
@@ -1266,23 +1035,21 @@ export default function Tarefa_1() {
                                     <label>
                                         Tipo de Transporte
                                     </label>
-                                    <InputText className="w-full" value={'Onibus,Metro,Trem,Etc.'}
-                                        readonly
+                                    <InputText className="w-full" value={state.tipo}
                                     />
                                 </div>
                                 <div className="col-12 field">
                                     <label>
                                         Valor da Tarifa
                                     </label>
-                                    <InputNumber className="w-full" value={99.99}
-                                        readonly
+                                    <InputNumber className="w-full" value={state.valor}
                                     />
                                 </div>
                                 <div className="col-12 field">
                                     <label>
                                         Quantidade Utilizada para Ida
                                     </label>
-                                    <InputNumber className="w-full" value={1}
+                                    <InputNumber className="w-full" value={state.qtdida}
                                         readonly
                                     />
                                 </div>
@@ -1290,7 +1057,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Quantidade Utilizada para Volta
                                     </label>
-                                    <InputNumber className="w-full" value={1}
+                                    <InputNumber className="w-full" value={state.qtdvolta}
                                         readonly
                                     />
                                 </div>
@@ -1299,7 +1066,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Escala Vale Transporte
                                     </label>
-                                    <InputNumber className="w-full" value={1}
+                                    <InputNumber className="w-full" value={state.esc}
                                         readonly
                                     />
                                 </div>
@@ -1317,109 +1084,35 @@ export default function Tarefa_1() {
                                         inputClassName='obrigatorio'
                                     />
                                 </div>
-                                <Divider align="left" > GRID </Divider>
+                                <ContentDivisor content={"LINHA / CARTÃO"}
+                                />
 
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 1
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 2
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 3
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 4
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 5
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 6
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
+                                {
+                                    linhasTransporte.map(l => (
+                                        <>
+                                            <div className="col-3 field">
+                                                <label>
+                                                    Linha 1
+                                                </label>
+                                                <InputNumber className="w-full" value={l.linha}
+                                                    readonly
+                                                />
+                                            </div>
+                                            <div className="col-3 field">
+                                                <label>
+                                                    Numero do Cartão
+                                                </label>
+                                                <InputNumber className="w-full" value={l.cartao}
+                                                    readonly
+                                                />
+                                            </div>
+                                            <div className="col-6 field" />
+                                        </>
+                                    ))
+                                }
+                                <Button> Nova linha
+
+                                </Button>
                             </>
                         }
                         {
@@ -1447,7 +1140,7 @@ export default function Tarefa_1() {
 
 
                 {
-                    motivoSelecionado?.cod == 3 &&
+                    motivoSelecionado?.cod === 3 &&
                     <>
                         {/* Vale Transporte motivo 3 */}
 
@@ -1530,8 +1223,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Nome da Operadora de Vale Transporte
                                     </label>
-                                    <InputText className="w-full" value={"Empresa XPTO"}
-                                        readonly
+                                    <InputText className="w-full" value={state.nomevt}
                                     />
                                 </div>
 
@@ -1539,8 +1231,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Numero da Linha
                                     </label>
-                                    <InputNumber className="w-full" value={999999}
-                                        readonly
+                                    <InputNumber className="w-full" value={state.codlin}
                                     />
                                 </div>
 
@@ -1548,23 +1239,21 @@ export default function Tarefa_1() {
                                     <label>
                                         Tipo de Transporte
                                     </label>
-                                    <InputText className="w-full" value={'Onibus,Metro,Trem,Etc.'}
-                                        readonly
+                                    <InputText className="w-full" value={state.tipo}
                                     />
                                 </div>
                                 <div className="col-12 field">
                                     <label>
                                         Valor da Tarifa
                                     </label>
-                                    <InputNumber className="w-full" value={99.99}
-                                        readonly
+                                    <InputNumber className="w-full" value={state.valor}
                                     />
                                 </div>
                                 <div className="col-12 field">
                                     <label>
                                         Quantidade Utilizada para Ida
                                     </label>
-                                    <InputNumber className="w-full" value={1}
+                                    <InputNumber className="w-full" value={state.qtdida}
                                         readonly
                                     />
                                 </div>
@@ -1572,7 +1261,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Quantidade Utilizada para Volta
                                     </label>
-                                    <InputNumber className="w-full" value={1}
+                                    <InputNumber className="w-full" value={state.qtdvolta}
                                         readonly
                                     />
                                 </div>
@@ -1581,7 +1270,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Escala Vale Transporte
                                     </label>
-                                    <InputNumber className="w-full" value={1}
+                                    <InputNumber className="w-full" value={state.esc}
                                         readonly
                                     />
                                 </div>
@@ -1599,109 +1288,35 @@ export default function Tarefa_1() {
                                         inputClassName='obrigatorio'
                                     />
                                 </div>
-                                <Divider align="left" > GRID </Divider>
+                                <ContentDivisor content={"LINHA / CARTÃO"}
+                                />
 
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 1
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 2
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 3
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 4
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 5
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 6
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
+                                {
+                                    linhasTransporte.map(l => (
+                                        <>
+                                            <div className="col-3 field">
+                                                <label>
+                                                    Linha 1
+                                                </label>
+                                                <InputNumber className="w-full" value={l.linha}
+                                                    readonly
+                                                />
+                                            </div>
+                                            <div className="col-3 field">
+                                                <label>
+                                                    Numero do Cartão
+                                                </label>
+                                                <InputNumber className="w-full" value={l.cartao}
+                                                    readonly
+                                                />
+                                            </div>
+                                            <div className="col-6 field" />
+                                        </>
+                                    ))
+                                }
+                                <Button> Nova linha
+
+                                </Button>
                             </>
                         }
                         {
@@ -1712,8 +1327,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Nome da Operadora de Vale Transporte
                                     </label>
-                                    <InputText className="w-full" value={"Empresa XPTO"}
-                                        readonly
+                                    <InputText className="w-full" value={state.nomevt}
                                     />
                                 </div>
 
@@ -1721,8 +1335,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Numero da Linha
                                     </label>
-                                    <InputNumber className="w-full" value={999999}
-                                        readonly
+                                    <InputNumber className="w-full" value={state.codlin}
                                     />
                                 </div>
 
@@ -1730,23 +1343,21 @@ export default function Tarefa_1() {
                                     <label>
                                         Tipo de Transporte
                                     </label>
-                                    <InputText className="w-full" value={'Onibus,Metro,Trem,Etc.'}
-                                        readonly
+                                    <InputText className="w-full" value={state.tipo}
                                     />
                                 </div>
                                 <div className="col-12 field">
                                     <label>
                                         Valor da Tarifa
                                     </label>
-                                    <InputNumber className="w-full" value={99.99}
-                                        readonly
+                                    <InputNumber className="w-full" value={state.valor}
                                     />
                                 </div>
                                 <div className="col-12 field">
                                     <label>
                                         Quantidade Utilizada para Ida
                                     </label>
-                                    <InputNumber className="w-full" value={1}
+                                    <InputNumber className="w-full" value={state.qtdida}
                                         readonly
                                     />
                                 </div>
@@ -1754,7 +1365,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Quantidade Utilizada para Volta
                                     </label>
-                                    <InputNumber className="w-full" value={1}
+                                    <InputNumber className="w-full" value={state.qtdvolta}
                                         readonly
                                     />
                                 </div>
@@ -1763,7 +1374,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Escala Vale Transporte
                                     </label>
-                                    <InputNumber className="w-full" value={1}
+                                    <InputNumber className="w-full" value={state.esc}
                                         readonly
                                     />
                                 </div>
@@ -1781,109 +1392,35 @@ export default function Tarefa_1() {
                                         inputClassName='obrigatorio'
                                     />
                                 </div>
-                                <Divider align="left" > GRID </Divider>
+                                <ContentDivisor content={"LINHA / CARTÃO"}
+                                />
 
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 1
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 2
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 3
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 4
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 5
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-6 field" />
-                                <div className="col-3 field">
-                                    <label>
-                                        Linha 6
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Numero do Cartão
-                                    </label>
-                                    <InputNumber className="w-full" value={""}
-                                        readonly
-                                    />
-                                </div>
+                                {
+                                    linhasTransporte.map(l => (
+                                        <>
+                                            <div className="col-3 field">
+                                                <label>
+                                                    Linha 1
+                                                </label>
+                                                <InputNumber className="w-full" value={l.linha}
+                                                    readonly
+                                                />
+                                            </div>
+                                            <div className="col-3 field">
+                                                <label>
+                                                    Numero do Cartão
+                                                </label>
+                                                <InputNumber className="w-full" value={l.cartao}
+                                                    readonly
+                                                />
+                                            </div>
+                                            <div className="col-6 field" />
+                                        </>
+                                    ))
+                                }
+                                <Button> Nova linha
+
+                                </Button>
                             </>
                         }
                         {
@@ -1911,7 +1448,7 @@ export default function Tarefa_1() {
 
 
                 {
-                    motivoSelecionado?.cod == 4 &&
+                    motivoSelecionado?.cod === 4 &&
                     <>
                         <div className='field col-12'>
                             <FieldName name='Justifique' />
@@ -1934,7 +1471,8 @@ export default function Tarefa_1() {
                                 {/* Vale Transporte */}
 
                                 <div className="col-12 field">
-                                    <Divider align="left" > Vale Transporte </Divider>
+                                    <ContentDivisor content={"Vale Transporte"}
+                                    />
                                     <label>
                                         Escala Vale de transporte Atual
                                     </label>
@@ -1962,8 +1500,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Nome da Operadora de Vale Transporte
                                             </label>
-                                            <InputText className="w-full" value={"Empresa XPTO"}
-                                                readonly
+                                            <InputText className="w-full" value={state.nomevt}
                                             />
                                         </div>
 
@@ -1971,8 +1508,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Numero da Linha
                                             </label>
-                                            <InputNumber className="w-full" value={999999}
-                                                readonly
+                                            <InputNumber className="w-full" value={state.codlin}
                                             />
                                         </div>
 
@@ -1980,23 +1516,21 @@ export default function Tarefa_1() {
                                             <label>
                                                 Tipo de Transporte
                                             </label>
-                                            <InputText className="w-full" value={'Onibus,Metro,Trem,Etc.'}
-                                                readonly
+                                            <InputText className="w-full" value={state.tipo}
                                             />
                                         </div>
                                         <div className="col-12 field">
                                             <label>
                                                 Valor da Tarifa
                                             </label>
-                                            <InputNumber className="w-full" value={99.99}
-                                                readonly
+                                            <InputNumber className="w-full" value={state.valor}
                                             />
                                         </div>
                                         <div className="col-12 field">
                                             <label>
                                                 Quantidade Utilizada para Ida
                                             </label>
-                                            <InputNumber className="w-full" value={1}
+                                            <InputNumber className="w-full" value={state.qtdida}
                                                 readonly
                                             />
                                         </div>
@@ -2004,7 +1538,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Quantidade Utilizada para Volta
                                             </label>
-                                            <InputNumber className="w-full" value={1}
+                                            <InputNumber className="w-full" value={state.qtdvolta}
                                                 readonly
                                             />
                                         </div>
@@ -2013,7 +1547,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Escala Vale Transporte
                                             </label>
-                                            <InputNumber className="w-full" value={1}
+                                            <InputNumber className="w-full" value={state.esc}
                                                 readonly
                                             />
                                         </div>
@@ -2031,110 +1565,35 @@ export default function Tarefa_1() {
                                                 inputClassName='obrigatorio'
                                             />
                                         </div>
-                                        <Divider align="left" > GRID </Divider>
+                                        <ContentDivisor content={"LINHA / CARTÃO"}
+                                        />
 
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 1
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 2
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 3
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 4
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 5
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 6
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                    </>
+                                        {
+                                            linhasTransporte.map(l => (
+                                                <>
+                                                    <div className="col-3 field">
+                                                        <label>
+                                                            Linha 1
+                                                        </label>
+                                                        <InputNumber className="w-full" value={l.linha}
+                                                            readonly
+                                                        />
+                                                    </div>
+                                                    <div className="col-3 field">
+                                                        <label>
+                                                            Numero do Cartão
+                                                        </label>
+                                                        <InputNumber className="w-full" value={l.cartao}
+                                                            readonly
+                                                        />
+                                                    </div>
+                                                    <div className="col-6 field" />
+                                                </>
+                                            ))
+                                        }
+                                        <Button> Nova linha
+
+                                        </Button>                                    </>
                                 }
                                 {
                                     operacaoSelecionada?.cod == 2 &&
@@ -2144,8 +1603,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Nome da Operadora de Vale Transporte
                                             </label>
-                                            <InputText className="w-full" value={"Empresa XPTO"}
-                                                readonly
+                                            <InputText className="w-full" value={state.nomevt}
                                             />
                                         </div>
 
@@ -2153,8 +1611,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Numero da Linha
                                             </label>
-                                            <InputNumber className="w-full" value={999999}
-                                                readonly
+                                            <InputNumber className="w-full" value={state.codlin}
                                             />
                                         </div>
 
@@ -2162,23 +1619,21 @@ export default function Tarefa_1() {
                                             <label>
                                                 Tipo de Transporte
                                             </label>
-                                            <InputText className="w-full" value={'Onibus,Metro,Trem,Etc.'}
-                                                readonly
+                                            <InputText className="w-full" value={state.tipo}
                                             />
                                         </div>
                                         <div className="col-12 field">
                                             <label>
                                                 Valor da Tarifa
                                             </label>
-                                            <InputNumber className="w-full" value={99.99}
-                                                readonly
+                                            <InputNumber className="w-full" value={state.valor}
                                             />
                                         </div>
                                         <div className="col-12 field">
                                             <label>
                                                 Quantidade Utilizada para Ida
                                             </label>
-                                            <InputNumber className="w-full" value={1}
+                                            <InputNumber className="w-full" value={state.qtdida}
                                                 readonly
                                             />
                                         </div>
@@ -2186,7 +1641,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Quantidade Utilizada para Volta
                                             </label>
-                                            <InputNumber className="w-full" value={1}
+                                            <InputNumber className="w-full" value={state.qtdvolta}
                                                 readonly
                                             />
                                         </div>
@@ -2195,7 +1650,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Escala Vale Transporte
                                             </label>
-                                            <InputNumber className="w-full" value={1}
+                                            <InputNumber className="w-full" value={state.esc}
                                                 readonly
                                             />
                                         </div>
@@ -2213,109 +1668,35 @@ export default function Tarefa_1() {
                                                 inputClassName='obrigatorio'
                                             />
                                         </div>
-                                        <Divider align="left" > GRID </Divider>
+                                        <ContentDivisor content={"LINHA / CARTÃO"}
+                                        />
 
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 1
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 2
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 3
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 4
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 5
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-6 field" />
-                                        <div className="col-3 field">
-                                            <label>
-                                                Linha 6
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-3 field">
-                                            <label>
-                                                Numero do Cartão
-                                            </label>
-                                            <InputNumber className="w-full" value={""}
-                                                readonly
-                                            />
-                                        </div>
+                                        {
+                                            linhasTransporte.map(l => (
+                                                <>
+                                                    <div className="col-3 field">
+                                                        <label>
+                                                            Linha 1
+                                                        </label>
+                                                        <InputNumber className="w-full" value={l.linha}
+                                                            readonly
+                                                        />
+                                                    </div>
+                                                    <div className="col-3 field">
+                                                        <label>
+                                                            Numero do Cartão
+                                                        </label>
+                                                        <InputNumber className="w-full" value={l.cartao}
+                                                            readonly
+                                                        />
+                                                    </div>
+                                                    <div className="col-6 field" />
+                                                </>
+                                            ))
+                                        }
+                                        <Button> Nova linha
+
+                                        </Button>
                                     </>
                                 }
                                 {
@@ -2395,14 +1776,16 @@ export default function Tarefa_1() {
                                         </div>
 
                                         <Divider align="left" > Dependente </Divider>
-                                        <div className="col-4 flex flex-column mb-2">
-                                            <InputText className="w-full" placeholder='Dependente 1'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 2'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 3'
-                                            />
-                                        </div>
+                                        {
+                                            dependente.length > 0 && dependente?.map(dep => (
+                                                <div className="col-4 flex flex-column mb-2">
+                                                    <InputText className="w-full" value={dep.nomdep}
+                                                        readonly
+                                                    />
+                                                </div>
+                                            ))
+
+                                        }
 
                                         <div className="col-12 field">
                                             <label>
@@ -2451,14 +1834,16 @@ export default function Tarefa_1() {
                                         </div>
 
                                         <Divider align="left" > Dependente </Divider>
-                                        <div className="col-4 flex flex-column mb-2">
-                                            <InputText className="w-full" placeholder='Dependente 1'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 2'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 3'
-                                            />
-                                        </div>
+                                        {
+                                            dependente.length > 0 && dependente?.map(dep => (
+                                                <div className="col-4 flex flex-column mb-2">
+                                                    <InputText className="w-full" value={dep.nomdep}
+                                                        readonly
+                                                    />
+                                                </div>
+                                            ))
+
+                                        }
 
                                         <div className="col-12 field">
                                             <label>
@@ -2482,7 +1867,7 @@ export default function Tarefa_1() {
                                     </>
                                 }
 
-{
+                                {
                                     operacaoSelecionadaPlano?.cod == 3 &&
                                     <>
                                         <div className="col-6 field">
@@ -2507,26 +1892,20 @@ export default function Tarefa_1() {
                                         </div>
 
                                         <Divider align="left" > Dependente </Divider>
-                                        <div className="col-4 flex flex-column mb-2">
-                                            <InputText className="w-full" placeholder='Dependente 1'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 2'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 3'
-                                            />
-                                        </div>
+                                        {
+                                            dependente.length > 0 && dependente?.map(dep => (
+                                                <div className="col-4 flex flex-column mb-2">
+                                                    <InputText className="w-full" value={dep.nomdep}
+                                                        readonly
+                                                    />
+                                                </div>
+                                            ))
+
+                                        }
 
                                         <div className="col-3 field">
-                                            <input id="Excluir1" name="base" type="radio" value="S" />
+                                            <input id="Excluir" name="base" type="radio" value="S" />
                                             <label>
-                                                Excluir
-                                            </label>
-                                            <label>
-                                                <input id="Excluir2" name="base" type="radio" value="S" />
-                                                Excluir
-                                            </label>
-                                            <label>
-                                                <input id="Excluir3" name="base" type="radio" value="S" />
                                                 Excluir
                                             </label>
                                         </div>
@@ -2551,26 +1930,20 @@ export default function Tarefa_1() {
                                         </div>
 
                                         <Divider align="left" > Dependente </Divider>
-                                        <div className="col-4 flex flex-column mb-2">
-                                            <InputText className="w-full" placeholder='Dependente 1'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 2'
-                                            />
-                                            <InputText className="w-full" placeholder='Dependente 3'
-                                            />
-                                        </div>
+                                        {
+                                            dependente.length > 0 && dependente?.map(dep => (
+                                                <div className="col-4 flex flex-column mb-2">
+                                                    <InputText className="w-full" value={dep.nomdep}
+                                                        readonly
+                                                    />
+                                                </div>
+                                            ))
+
+                                        }
 
                                         <div className="col-3 field">
-                                            <input id="Excluir1" name="base" type="radio" value="S" />
+                                            <input id="Excluir" name="base" type="radio" value="S" />
                                             <label>
-                                                Excluir
-                                            </label>
-                                            <label>
-                                                <input id="Excluir2" name="base" type="radio" value="S" />
-                                                Excluir
-                                            </label>
-                                            <label>
-                                                <input id="Excluir3" name="base" type="radio" value="S" />
                                                 Excluir
                                             </label>
                                         </div>
@@ -2615,32 +1988,16 @@ export default function Tarefa_1() {
                                 </div>
 
                                 <Divider align="left" > Dependente </Divider>
-                                <div className="col-4 flex flex-column mb-2">
-                                    <InputText className="w-full" placeholder='Dependente 1'
-                                    />
-                                    <div className="col-3 field">
-                                        <input id="Manter" name="base" type="checkbox" value="S" />
-                                        <label>
-                                            Excluir
-                                        </label>
-                                    </div>
-                                    <InputText className="w-full" placeholder='Dependente 2'
-                                    />
-                                    <div className="col-3 field">
-                                        <input id="Manter" name="base" type="checkbox" value="S" />
-                                        <label>
-                                            Excluir
-                                        </label>
-                                    </div>
-                                    <InputText className="w-full" placeholder='Dependente 3'
-                                    />
-                                    <div className="col-3 field">
-                                        <input id="Manter" name="base" type="checkbox" value="S" />
-                                        <label>
-                                            Excluir
-                                        </label>
-                                    </div>
-                                </div>
+                                {
+                                    dependente.length > 0 && dependente?.map(dep => (
+                                        <div className="col-4 flex flex-column mb-2">
+                                            <InputText className="w-full" value={dep.nomdep}
+                                                readonly
+                                            />
+                                        </div>
+                                    ))
+
+                                }
 
                             </>
                         }

@@ -17,7 +17,7 @@ export default async function getColaborador(user) {
         redirect: 'follow'
     };
     let url = "https://portalrh.alliar.com:8183/SXI/G5Rest?module=rubi&service=com.senior.xplatform.bpm&server=https://portalrh.alliar.com:8183&port=retorno_lider";
-   
+
     let retorno;
     try {
         let response = await fetch(url, requestOptions)
@@ -42,13 +42,21 @@ export default async function getColaborador(user) {
                 endrua: response.endrua,
                 endcpl: response.endcpl,
                 nombai: response.nombai,
-                nomcid: response.nomcid,
+                nomcid: response.nomcid
             },
             empresa: {
                 numEmp: response.numemp,
                 codFil: response.codfil,
                 nomFil: response.nomfil,
                 datfil: response.datfil
+            },
+            dependentes: {
+                nomdep: response.nomdep,
+                numcad: response.numcad,
+                numemp: response.numemp,
+                tipcol: response.tipcol,
+                grapar: response.grapar,
+                coddep: response.coddep
             }
         }
     } catch (error) {

@@ -4,9 +4,9 @@ export default async function getPlanoSaudeAtualColaborador(numemp,tipcol,numcad
     myHeaders.append("pass", "Jborba@2022");
     myHeaders.append("encryptionType", "0");
     myHeaders.append("Content-Type", "aplication/json");
-
+    
     var raw = JSON.stringify({
-        numemp,tipcol,numcad:13000063
+        numemp:1,tipcol:1,numcad:13000063
     });
 
     var requestOptions = {
@@ -29,3 +29,4 @@ export default async function getPlanoSaudeAtualColaborador(numemp,tipcol,numcad
     }
     return retorno;
 }
+

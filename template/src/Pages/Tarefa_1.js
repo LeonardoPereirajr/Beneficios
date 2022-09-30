@@ -2,7 +2,6 @@ import { InputText } from 'primereact/inputtext';
 import { Divider } from 'primereact/divider';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
-import { Card } from 'primereact/card';
 import React from 'react'
 import useGlobalState from '../globalState';
 import { InputTextarea } from 'primereact/inputtextarea'
@@ -23,8 +22,22 @@ export default function Tarefa_1() {
 
     const info = globalState.variaveisProcesso
 
+    const motivoSolicitacao = [
+        { label: 'Alteração de Unidade', cod: 1 },
+        { label: 'Alteração de Escala', cod: 2 },
+        { label: 'Alteração de Endereço', cod: 3 },
+        { label: 'Outros (Justifique)', cod: 4 },
+
+    ]
+    const tipoTransporte = [
+        { label: 'Onibus', cod: 1 },
+        { label: 'Metro', cod: 2 },
+        { label: 'Trem', cod: 3 },
+        { label: 'Outro', cod: 4 }
+    ]
+
     const initialState = {
-        usuario: null,
+        usuario: globalState.usuario,
         nomevt: null,
         codlin: null,
         tipo: null,
@@ -34,17 +47,12 @@ export default function Tarefa_1() {
         esc: null,
         datainivale: null,
         linha: null,
-        cartao: null
+        cartao: null,
+        motivoSelecionado: null,
+        beneficioSelecionado: null,
+        operacaoSelecionada: null,
+        tipoTransporte: null,
     }
-
-    const motivoSolicitacao = [
-        { label: 'Alteração de Unidade', cod: 1 },
-        { label: 'Alteração de Escala', cod: 2 },
-        { label: 'Alteração de Endereço', cod: 3 },
-        { label: 'Outros (Justifique)', cod: 4 },
-
-    ]
-    const [motivoSelecionado, setMotivoSelecionado] = useState(null)
 
     const beneficio = [
         { label: 'Vale Transporte', cod: 1 },
@@ -52,7 +60,6 @@ export default function Tarefa_1() {
         { label: 'Odonto', cod: 3 },
         { label: 'VA / VR', cod: 4 },
     ]
-    const [beneficioSelecionado, setBeneficioSelecionado] = useState(null)
 
     const operacao = [
         { label: 'Incluir', cod: 1 },
@@ -112,14 +119,10 @@ export default function Tarefa_1() {
 
     useEffect(() => {
         getColaborador(globalState.usuario.subject).then((param) => {
-            setPlanoSaude(param)
             getPlanoSaudeAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad)
                 .then((data) => {
-                    if (data.colaboradores.nompla) {
-                        setPlanoSaude(data.colaboradores.nompla)
-                    }
-                    if (data.colaboradores.mesinc) {
-                        setInclusaoPlano(data.colaboradores.mesinc)
+                    if (data.colaboradores.length > 0) {
+                        setPlanoSaude(data.colaboradores)
                     }
                 })
         })
@@ -128,6 +131,7 @@ export default function Tarefa_1() {
     // Salvar variaveis do processo
     useEffect(() => {
         GLOBAL.tarefa_1 = state;
+        console.log(state)
     }, [state])
 
 
@@ -169,30 +173,32 @@ export default function Tarefa_1() {
             <div className="col-12 field">
                 <label> Escolha o motivo da solicitação</label>
                 <Dropdown
-                    value={motivoSelecionado}
+                    value={state.motivoSelecionado}
                     options={motivoSolicitacao}
                     className="w-full"
-                    onChange={(e) => setMotivoSelecionado(e.value)}
+                    onChange={(e) => setState({ ...state, motivoSelecionado: e.value })}
                 />
             </div>
 
-            <div className="grid px-2" style={{ display: motivoSelecionado ? "" : "none" }}>
+            <div className="grid px-2" style={{ display: state.motivoSelecionado ? "" : "none" }}>
 
                 {
-                    motivoSelecionado?.cod === 1 &&
+                    state.motivoSelecionado?.cod === 1 &&
                     <>
                         <div className="col-12 field">
                             <label> Escolha o beneficio. </label>
                             <Dropdown
-                                value={beneficioSelecionado}
+                                value={state.beneficioSelecionado}
                                 options={beneficio}
                                 className="w-full"
-                                onChange={(e) => setBeneficioSelecionado(e.value)}
+                                onChange={(e) => setState({ ...state, beneficioSelecionado: e.value })}
                             />
                         </div>
+
                         {/* Vale Transporte */}
                         {
-                            beneficioSelecionado?.cod === 1 &&
+
+                            state.beneficioSelecionado?.cod === 1 &&
                             <>
 
                                 <div className="col-12 field">
@@ -201,35 +207,37 @@ export default function Tarefa_1() {
                                     <label>
                                         Escala Vale de transporte Atual
                                     </label>
-                                    <InputText className="w-full" value={VTAtual}
+                                    <InputText
+                                        className="w-full"
+                                        value={VTAtual}
+                                        onChange={(e) => setState({ ...state, nomevt: e.value })}
                                         readonly
                                     />
                                 </div>
 
-
                                 <div className="col-12 field">
                                     <label>Tipo de operação</label>
                                     <Dropdown
-                                        value={operacaoSelecionada}
+                                        value={state.operacaoSelecionada}
                                         options={operacao}
                                         className="w-full"
-                                        onChange={(e) => setOperacaoSelecionada(e.value)}
+                                        onChange={(e) => setState({ ...state, operacaoSelecionada: e.value })}
                                     />
                                 </div>
 
 
                                 {
-                                    operacaoSelecionada?.cod == 1 &&
+                                    state.operacaoSelecionada?.cod === 1 &&
                                     <>
 
                                         <div className="col-12 field">
                                             <label>
                                                 Nome da Operadora de Vale Transporte
                                             </label>
-                                            <InputText 
-                                            className="w-full" 
-                                            value={state.nomevt}
-                                            onChange={({ value }) => setState({ ...state, nomevt: value })}
+                                            <InputText
+                                                className="w-full"
+                                                value={VTAtual}
+                                                onChange={(VTAtual) => setState({ ...state, esc: VTAtual.value })}
                                             />
                                         </div>
 
@@ -237,10 +245,10 @@ export default function Tarefa_1() {
                                             <label>
                                                 Numero da Linha
                                             </label>
-                                            <InputNumber 
-                                            className="w-full" 
-                                            value={state.codlin}
-                                            onChange={({ value }) => setState({ ...state, codlin: value })}
+                                            <InputNumber
+                                                className="w-full"
+                                                value={state.codlin}
+                                                onChange={(e) => setState({ ...state, codlin: e.value })}
                                             />
                                         </div>
 
@@ -248,30 +256,31 @@ export default function Tarefa_1() {
                                             <label>
                                                 Tipo de Transporte
                                             </label>
-                                            <InputText 
-                                            className="w-full" 
-                                            value={state.tipo}
-                                            onChange={({ value }) => setState({ ...state, tipo: value })}
+                                            <Dropdown
+                                                value={state.tipo}
+                                                options={tipoTransporte}
+                                                className="w-full"
+                                                onChange={(e) => setState({ ...state, tipo: e.value })}
                                             />
                                         </div>
                                         <div className="col-12 field">
                                             <label>
                                                 Valor da Tarifa
                                             </label>
-                                            <InputNumber 
-                                            className="w-full" 
-                                            value={state.valor}
-                                            onChange={({ value }) => setState({ ...state, valor: value })}
+                                            <InputNumber
+                                                className="w-full"
+                                                value={state.valor}
+                                                onChange={(e) => setState({ ...state, valor: e.value })}
                                             />
                                         </div>
                                         <div className="col-12 field">
                                             <label>
                                                 Quantidade Utilizada para Ida
                                             </label>
-                                            <InputNumber 
-                                            className="w-full" 
-                                            value={state.qtdida}
-                                            onChange={({ value }) => setState({ ...state, qtdida: value })}
+                                            <InputNumber
+                                                className="w-full"
+                                                value={state.qtdida}
+                                                onChange={(e) => setState({ ...state, qtdida: e.value })}
                                                 readonly
                                             />
                                         </div>
@@ -279,11 +288,10 @@ export default function Tarefa_1() {
                                             <label>
                                                 Quantidade Utilizada para Volta
                                             </label>
-                                            <InputNumber 
-                                            className="w-full" 
-                                            value={state.qtdvolta}
-                                            onChange={({ value }) => setState({ ...state, qtdvolta: value })}
-                                                readonly
+                                            <InputNumber
+                                                className="w-full"
+                                                value={state.qtdvolta}
+                                                onChange={(e) => setState({ ...state, qtdvolta: e.value })}
                                             />
                                         </div>
 
@@ -294,8 +302,7 @@ export default function Tarefa_1() {
                                             <InputNumber
                                                 className="w-full"
                                                 value={state.esc}
-                                                onChange={({ value }) => setState({ ...state, esc: value })}
-                                                readonly
+                                                onChange={(e) => setState({ ...state, esc: e.value })}
                                             />
                                         </div>
                                         <div className="col-4 field">
@@ -303,7 +310,7 @@ export default function Tarefa_1() {
                                             <Datepicker
                                                 className='w-full'
                                                 value={state.datainivale}
-                                                onChange={({ value }) => setState({ ...state, datainivale: value })}
+                                                onChange={(e) => setState({ ...state, datainivale: e.value })}
                                                 inputClassName='obrigatorio'
                                             />
                                         </div>
@@ -317,16 +324,22 @@ export default function Tarefa_1() {
                                                         <label>
                                                             Linha 1
                                                         </label>
-                                                        <InputNumber className="w-full" value={l.linha}
-                                                            readonly
+                                                        <InputNumber
+                                                            className="w-full"
+                                                            value={l.linha}
+                                                            onChange={(e) => setState({ ...state, linha: e.value })}
+                                                            placeholder="Numero"
                                                         />
                                                     </div>
                                                     <div className="col-3 field">
                                                         <label>
                                                             Numero do Cartão
                                                         </label>
-                                                        <InputNumber className="w-full" value={l.cartao}
-                                                            readonly
+                                                        <InputNumber
+                                                            className="w-full"
+                                                            value={l.cartao}
+                                                            onChange={(e) => setState({ ...state, cartao: e.value })}
+                                                            placeholder="Numero"
                                                         />
                                                     </div>
                                                     <div className="col-6 field" />
@@ -443,7 +456,7 @@ export default function Tarefa_1() {
                                     </>
                                 }
                                 {
-                                    operacaoSelecionada?.cod == 3 &&
+                                    operacaoSelecionada?.cod === 3 &&
                                     <>
                                         <div className="col-12 field">
                                             <FieldName name='Data Início' />
@@ -468,16 +481,18 @@ export default function Tarefa_1() {
 
                         {/* Plano de saude */}
                         {
-                            beneficioSelecionado?.cod === 2 &&
+                            state.beneficioSelecionado?.cod === 2 &&
                             <>
 
                                 <div className="col-12 field">
-                                    <Divider align="left" > Plano de Saude </Divider>
+                                    <ContentDivisor content={"Plano de Saúde"}
+                                    />
+                                    {console.log("Plano atual : ", PlanoAtual)}
                                     <label>
                                         Plano Titular Atual + Data Inclusão
                                     </label>
-                                    {console.log(dados)}
-                                    <InputText className="w-full" value={PlanoAtual + ' | ' + DataInclusaoPlano}
+
+                                    <InputText className="w-full" value={PlanoAtual}
                                         readonly
                                     />
                                 </div>
@@ -699,11 +714,12 @@ export default function Tarefa_1() {
                         {/* PLANO ODONTO */}
 
                         {
-                            beneficioSelecionado?.cod === 3 &&
+                            state.beneficioSelecionado?.cod === 3 &&
                             <>
 
                                 <div className="col-12 field">
-                                    <Divider align="left" > Plano Odonto </Divider>
+                                    <ContentDivisor content={"Odonto"}
+                                    />
                                     <label>
                                         Plano Titular Atual
                                     </label>
@@ -747,10 +763,11 @@ export default function Tarefa_1() {
 
                         {/* VA/VR */}
                         {
-                            beneficioSelecionado?.cod === 4 &&
+                            state.beneficioSelecionado?.cod === 4 &&
                             <>
 
-                                <Divider align="left" > VA / VR </Divider>
+                                <ContentDivisor content={"VA / VR"}
+                                />
 
 
                                 <div className="col-12 field">
@@ -874,7 +891,7 @@ export default function Tarefa_1() {
 
 
                 {
-                    motivoSelecionado?.cod === 2 &&
+                    state.motivoSelecionado?.cod === 2 &&
                     <>
                         {/* Vale Transporte motivo 2 */}
 
@@ -896,7 +913,8 @@ export default function Tarefa_1() {
                         </div>
 
                         <div className="col-12 field">
-                            <Divider align="left" > Vale Transporte </Divider>
+                            <ContentDivisor content={"Vale Transporte"}
+                            />
                             <label>
                                 Escala Vale de transporte Atual
                             </label>
@@ -917,7 +935,7 @@ export default function Tarefa_1() {
                         </div>
 
                         {
-                            operacaoSelecionada?.cod == 1 &&
+                            operacaoSelecionada?.cod === 1 &&
                             <>
 
                                 <div className="col-12 field">
@@ -1021,7 +1039,7 @@ export default function Tarefa_1() {
                             </>
                         }
                         {
-                            operacaoSelecionada?.cod == 2 &&
+                            operacaoSelecionada?.cod === 2 &&
                             <>
 
                                 <div className="col-12 field">
@@ -1125,7 +1143,7 @@ export default function Tarefa_1() {
                             </>
                         }
                         {
-                            operacaoSelecionada?.cod == 3 &&
+                            operacaoSelecionada?.cod === 3 &&
                             <>
                                 <div className="col-12 field">
                                     <FieldName name='Data Início' />
@@ -1149,7 +1167,7 @@ export default function Tarefa_1() {
 
 
                 {
-                    motivoSelecionado?.cod === 3 &&
+                    state.motivoSelecionado?.cod === 3 &&
                     <>
                         {/* Vale Transporte motivo 3 */}
 
@@ -1204,7 +1222,8 @@ export default function Tarefa_1() {
                         </div>
 
                         <div className="col-12 field">
-                            <Divider align="left" > Vale Transporte </Divider>
+                            <ContentDivisor content={"Vale Transporte"}
+                            />
                             <label>
                                 Escala Vale de transporte Atual
                             </label>
@@ -1225,7 +1244,7 @@ export default function Tarefa_1() {
                         </div>
 
                         {
-                            operacaoSelecionada?.cod == 1 &&
+                            operacaoSelecionada?.cod === 1 &&
                             <>
 
                                 <div className="col-12 field">
@@ -1329,7 +1348,7 @@ export default function Tarefa_1() {
                             </>
                         }
                         {
-                            operacaoSelecionada?.cod == 2 &&
+                            operacaoSelecionada?.cod === 2 &&
                             <>
 
                                 <div className="col-12 field">
@@ -1433,7 +1452,7 @@ export default function Tarefa_1() {
                             </>
                         }
                         {
-                            operacaoSelecionada?.cod == 3 &&
+                            operacaoSelecionada?.cod === 3 &&
                             <>
                                 <div className="col-12 field">
                                     <FieldName name='Data Início' />
@@ -1457,7 +1476,7 @@ export default function Tarefa_1() {
 
 
                 {
-                    motivoSelecionado?.cod === 4 &&
+                    state.motivoSelecionado?.cod === 4 &&
                     <>
                         <div className='field col-12'>
                             <FieldName name='Justifique' />
@@ -1468,14 +1487,14 @@ export default function Tarefa_1() {
                         <div className="col-12 field">
                             <label> Escolha o beneficio. </label>
                             <Dropdown
-                                value={beneficioSelecionado}
+                                value={state.beneficioSelecionado}
                                 options={beneficio}
                                 className="w-full"
-                                onChange={(e) => setBeneficioSelecionado(e.value)}
+                                onChange={(e) => setState({ ...state, beneficioSelecionado: e.value })}
                             />
                         </div>
                         {
-                            beneficioSelecionado?.cod == 1 &&
+                            state.beneficioSelecionado?.cod === 1 &&
                             <>
                                 {/* Vale Transporte */}
 
@@ -1502,7 +1521,7 @@ export default function Tarefa_1() {
                                 </div>
 
                                 {
-                                    operacaoSelecionada?.cod == 1 &&
+                                    operacaoSelecionada?.cod === 1 &&
                                     <>
 
                                         <div className="col-12 field">
@@ -1605,7 +1624,7 @@ export default function Tarefa_1() {
                                         </Button>                                    </>
                                 }
                                 {
-                                    operacaoSelecionada?.cod == 2 &&
+                                    operacaoSelecionada?.cod === 2 &&
                                     <>
 
                                         <div className="col-12 field">
@@ -1709,7 +1728,7 @@ export default function Tarefa_1() {
                                     </>
                                 }
                                 {
-                                    operacaoSelecionada?.cod == 3 &&
+                                    operacaoSelecionada?.cod === 3 &&
                                     <>
                                         <div className="col-12 field">
                                             <FieldName name='Data Início' />
@@ -1732,17 +1751,18 @@ export default function Tarefa_1() {
                         }
 
                         {
-                            beneficioSelecionado?.cod == 2 &&
+                            state.beneficioSelecionado?.cod === 2 &&
                             <>
 
                                 {/* PLANO DE SAUDE */}
 
                                 <div className="col-12 field">
-                                    <Divider align="left" > Plano de Saude </Divider>
+                                    <ContentDivisor content={"Plano de Saúde"}
+                                    />
                                     <label>
                                         Plano Titular Atual + Data Inclusão
                                     </label>
-                                    {console.log(dados)}
+                                    {console.log(state)}
                                     <InputText className="w-full" value={PlanoAtual + ' | ' + DataInclusaoPlano}
                                         readonly
                                     />
@@ -1761,7 +1781,7 @@ export default function Tarefa_1() {
                                 </div>
 
                                 {
-                                    operacaoSelecionadaPlano?.cod == 1 &&
+                                    operacaoSelecionadaPlano?.cod === 1 &&
                                     <>
                                         <div className="col-12 field">
                                             <label>
@@ -1819,7 +1839,7 @@ export default function Tarefa_1() {
                                 }
 
                                 {
-                                    operacaoSelecionadaPlano?.cod == 2 &&
+                                    operacaoSelecionadaPlano?.cod === 2 &&
                                     <>
                                         <div className="col-12 field">
                                             <label>
@@ -1877,7 +1897,7 @@ export default function Tarefa_1() {
                                 }
 
                                 {
-                                    operacaoSelecionadaPlano?.cod == 3 &&
+                                    operacaoSelecionadaPlano?.cod === 3 &&
                                     <>
                                         <div className="col-6 field">
                                             <label>
@@ -1921,7 +1941,7 @@ export default function Tarefa_1() {
                                     </>
                                 }
                                 {
-                                    operacaoSelecionadaPlano?.cod == 4 &&
+                                    operacaoSelecionadaPlano?.cod === 4 &&
                                     <>
                                         <div className="col-6 field">
                                             <label>
@@ -1965,11 +1985,12 @@ export default function Tarefa_1() {
                         {/* PLANO ODONTO */}
 
                         {
-                            beneficioSelecionado?.cod == 3 &&
+                            state.beneficioSelecionado?.cod === 3 &&
                             <>
 
                                 <div className="col-12 field">
-                                    <Divider align="left" > Plano Odonto </Divider>
+                                    <ContentDivisor content={"Odonto"}
+                                    />
                                     <label>
                                         Plano Titular Atual
                                     </label>
@@ -2013,10 +2034,11 @@ export default function Tarefa_1() {
 
                         {/* VA/VR */}
                         {
-                            beneficioSelecionado?.cod == 4 &&
+                            state.beneficioSelecionado?.cod === 4 &&
                             <>
 
-                                <Divider align="left" > VA / VR </Divider>
+                                <ContentDivisor content={"VA / VR"}
+                                />
 
 
                                 <div className="col-12 field">

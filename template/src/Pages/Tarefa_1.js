@@ -20,14 +20,32 @@ import ContentDivisor from '../components/ContentDivisor';
 export default function Tarefa_1() {
     const { globalState } = useGlobalState()
 
-    const info = globalState.variaveisProcesso
-
+    const initialState = {
+        usuario: globalState.usuario,
+        nomevt: null,
+        codlin: null,
+        transporteSelecionado:null,
+        valor: null,
+        qtdida: 0,
+        qtdvolta: 0,
+        esc: null,
+        datainivale: null,
+        linha: null,
+        cartao: null,
+        motivoSelecionado: null,
+        beneficioSelecionado: null,
+        operacaoSelecionada: null,
+        solicitante: null,
+        novoperiodo: null,
+        inievt: null,
+        escvtr: null,
+        operadoraAtual:null
+    }
     const motivoSolicitacao = [
         { label: 'Alteração de Unidade', cod: 1 },
         { label: 'Alteração de Escala', cod: 2 },
         { label: 'Alteração de Endereço', cod: 3 },
         { label: 'Outros (Justifique)', cod: 4 },
-
     ]
     const tipoTransporte = [
         { label: 'Onibus', cod: 1 },
@@ -36,30 +54,13 @@ export default function Tarefa_1() {
         { label: 'Outro', cod: 4 }
     ]
 
-    const initialState = {
-        usuario: globalState.usuario,
-        nomevt: null,
-        codlin: null,
-        tipo: null,
-        valor: null,
-        qtdida: null,
-        qtdvolta: null,
-        esc: null,
-        datainivale: null,
-        linha: null,
-        cartao: null,
-        motivoSelecionado: null,
-        beneficioSelecionado: null,
-        operacaoSelecionada: null,
-        tipoTransporte: null,
-    }
-
     const beneficio = [
         { label: 'Vale Transporte', cod: 1 },
         { label: 'Plano de Saúde', cod: 2 },
         { label: 'Odonto', cod: 3 },
         { label: 'VA / VR', cod: 4 },
     ]
+    const[beneficioSelecionado,setBeneficioSelecionado] = useState(null)
 
     const operacao = [
         { label: 'Incluir', cod: 1 },
@@ -82,24 +83,40 @@ export default function Tarefa_1() {
     const [operacaoSelecionadaPlano, setOperacaoSelecionadaPlano] = useState(null)
 
     const [dados, setDados] = useState(null)
-    const [VTAtual, setVTAtual] = useState("")
+    const [operadoraAtual, setOperadoraAtual] = useState("")
     const [DataInclusaoVT, setInclusaoVT] = useState("")
+    const [escalaAtual, setEscalaAtual] = useState("")
     const [PlanoAtual, setPlanoSaude] = useState("")
     const [DataInclusaoPlano, setInclusaoPlano] = useState("")
     const [dependente, setDependentes] = useState([])
-    const [linhasTransporte, setLinhasTransportes] = useState([{ linha: "teste", cartao: "123" }])
+    const [linhasTransporte, setLinhasTransportes] = useState([{ linha:"", cartao: "" }])
     const [state, setState] = useState(initialState);
 
     useEffect(() => {
         getColaborador(globalState.usuario.subject).then((param) => {
             setDados(param)
-            getEscalaAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad, param.usuario.dependentes)
+            getEscalaAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad)
                 .then((data) => {
                     if (data.escalas.nomevt) {
-                        setVTAtual(data.escalas.nomevt)
+                        setOperadoraAtual(data.escalas.nomevt)
+                        setState({ ...state, nomevt: data.escalas.nomevt })
                     }
+                })
+        })
+    }, [])
+
+    useEffect(() => {
+        getColaborador(globalState.usuario.subject).then((param) => {
+            setDados(param)
+            getEscalaAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad)
+                .then((data) => {
                     if (data.escalas.inievt) {
                         setInclusaoVT(data.escalas.inievt)
+                        setState({ ...state, inievt: data.escalas.inievt })
+                    }
+                    if (data.escalas.escvtr) {
+                        setEscalaAtual(data.escalas.escvtr)
+                        setState({ ...state, escvtr: data.escalas.escvtr })
                     }
                 })
         })
@@ -128,13 +145,21 @@ export default function Tarefa_1() {
         })
     }, [])
 
+    // useEffect(() => {
+    //     getColaborador(globalState.usuario.subject).then((dados) => {
+    //         if (dados.usuario.nomFun) {
+    //             setDados(dados.usuario.nomFun)
+    //             setState({ ...state, solicitante: dados.usuario.nomFun })
+    //         }
+    //     })
+    // }, [])
+
+
     // Salvar variaveis do processo
     useEffect(() => {
         GLOBAL.tarefa_1 = state;
         console.log(state)
     }, [state])
-
-
 
     return (
         <div>
@@ -142,9 +167,9 @@ export default function Tarefa_1() {
             <div className="col-12 field">
                 <ContentDivisor content={"COLABORADOR"}
                     icon={"pi pi-user"} />
-                <InputText className="w-full"
-                    value={dados?.usuario.nomFun}
-                    onChange={({ value }) => setState({ ...state, usuario: value })}
+                <InputText
+                    className="w-full"
+                    value={dados?.usuario.numCad +" - " +dados?.usuario.nomFun}
                     readonly
                 />
             </div>
@@ -153,7 +178,9 @@ export default function Tarefa_1() {
 
                 <ContentDivisor content={"Histórico Atual"}
                 />
-                <InputText className="w-full" value={dados?.empresa.datfil + ' | ' + dados?.empresa.numEmp + '-' + dados?.empresa.codFil + '-' + dados?.empresa.nomFil}
+                <InputText
+                    className="w-full"
+                    value={dados?.empresa.datfil + ' | ' + dados?.empresa.numEmp + '-' + dados?.empresa.codFil + '-' + dados?.empresa.nomFil}
                     readonly
                 />
             </div>
@@ -161,9 +188,10 @@ export default function Tarefa_1() {
 
                 <ContentDivisor content={"Para qual Período Deseja Solicitar a Alteração?"}
                 />
-
-                <InputText className="w-full" value={dados?.empresa.datfil + ' | ' + dados?.empresa.numEmp + '-' + dados?.empresa.codFil + '-' + dados?.empresa.nomFil}
-                    readonly
+                <Datepicker
+                    className='w-full'
+                    value={state.novoperiodo}
+                    onChange={(e) => setState({ ...state, novoperiodo: e.value })}
                 />
             </div>
 
@@ -209,9 +237,15 @@ export default function Tarefa_1() {
                                     </label>
                                     <InputText
                                         className="w-full"
-                                        value={VTAtual}
-                                        onChange={(e) => setState({ ...state, nomevt: e.value })}
-                                        readonly
+                                        value={escalaAtual}
+                                    />
+                                    <label>
+                                        Nome da Operadora de Vale Transporte
+                                    </label>
+                                    <InputText
+                                        className="w-full"
+                                        value={operadoraAtual}
+                                        onChange={(e) => setState({ ...state, operadoraAtual: e.value })}
                                     />
                                 </div>
 
@@ -232,17 +266,6 @@ export default function Tarefa_1() {
 
                                         <div className="col-12 field">
                                             <label>
-                                                Nome da Operadora de Vale Transporte
-                                            </label>
-                                            <InputText
-                                                className="w-full"
-                                                value={VTAtual}
-                                                onChange={(VTAtual) => setState({ ...state, esc: VTAtual.value })}
-                                            />
-                                        </div>
-
-                                        <div className="col-12 field">
-                                            <label>
                                                 Numero da Linha
                                             </label>
                                             <InputNumber
@@ -257,10 +280,10 @@ export default function Tarefa_1() {
                                                 Tipo de Transporte
                                             </label>
                                             <Dropdown
-                                                value={state.tipo}
+                                                value={state.transporteSelecionado}
                                                 options={tipoTransporte}
                                                 className="w-full"
-                                                onChange={(e) => setState({ ...state, tipo: e.value })}
+                                                onChange={(e) => setState({ ...state, transporteSelecionado: e.value })}
                                             />
                                         </div>
                                         <div className="col-12 field">
@@ -281,7 +304,6 @@ export default function Tarefa_1() {
                                                 className="w-full"
                                                 value={state.qtdida}
                                                 onChange={(e) => setState({ ...state, qtdida: e.value })}
-                                                readonly
                                             />
                                         </div>
                                         <div className="col-12 field">
@@ -291,7 +313,7 @@ export default function Tarefa_1() {
                                             <InputNumber
                                                 className="w-full"
                                                 value={state.qtdvolta}
-                                                onChange={(e) => setState({ ...state, qtdvolta: e.value })}
+                                                onChange={(volta) => setState({ ...state, qtdvolta: volta.value })}
                                             />
                                         </div>
 
@@ -318,7 +340,7 @@ export default function Tarefa_1() {
                                         />
 
                                         {
-                                            linhasTransporte.map(l => (
+                                            linhasTransporte.map( l=> (
                                                 <>
                                                     <div className="col-3 field">
                                                         <label>
@@ -328,7 +350,6 @@ export default function Tarefa_1() {
                                                             className="w-full"
                                                             value={l.linha}
                                                             onChange={(e) => setState({ ...state, linha: e.value })}
-                                                            placeholder="Numero"
                                                         />
                                                     </div>
                                                     <div className="col-3 field">
@@ -339,16 +360,12 @@ export default function Tarefa_1() {
                                                             className="w-full"
                                                             value={l.cartao}
                                                             onChange={(e) => setState({ ...state, cartao: e.value })}
-                                                            placeholder="Numero"
                                                         />
                                                     </div>
                                                     <div className="col-6 field" />
                                                 </>
                                             ))
                                         }
-                                        <Button > Nova linha
-
-                                        </Button>
                                     </>
                                 }
                                 {
@@ -918,7 +935,7 @@ export default function Tarefa_1() {
                             <label>
                                 Escala Vale de transporte Atual
                             </label>
-                            <InputText className="w-full" value={VTAtual}
+                            <InputText className="w-full" value={operadoraAtual}
                                 readonly
                             />
                         </div>
@@ -1227,7 +1244,7 @@ export default function Tarefa_1() {
                             <label>
                                 Escala Vale de transporte Atual
                             </label>
-                            <InputText className="w-full" value={VTAtual}
+                            <InputText className="w-full" value={operadoraAtual}
                                 readonly
                             />
                         </div>
@@ -1504,7 +1521,7 @@ export default function Tarefa_1() {
                                     <label>
                                         Escala Vale de transporte Atual
                                     </label>
-                                    <InputText className="w-full" value={VTAtual}
+                                    <InputText className="w-full" value={operadoraAtual}
                                         readonly
                                     />
                                 </div>

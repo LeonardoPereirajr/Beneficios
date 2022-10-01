@@ -21,13 +21,12 @@ export default function Tarefa_2() {
 
     const { globalState } = useGlobalState()
 
-    console.log(globalState)
+    console.log(globalState.variaveisProcesso)
 
     let initialState = {
-        usuario: globalState.usuario,
+        solicitante: GLOBAL.tarefa_1.solicitante,
         nomevt: globalState.variaveisProcesso.nomevt,
         codlin: globalState.variaveisProcesso.codlin,
-        tipo: globalState.variaveisProcesso.tipo,
         valor: globalState.variaveisProcesso.valor,
         qtdida: globalState.variaveisProcesso.qtdida,
         qtdvolta: globalState.variaveisProcesso.qtdvolta,
@@ -35,18 +34,18 @@ export default function Tarefa_2() {
         datainivale: globalState.variaveisProcesso.datainivale,
         linha: globalState.variaveisProcesso.linha,
         cartao: globalState.variaveisProcesso.cartao,
-        motivoSelecionado:globalState.variaveisProcesso.motivoSelecionado,
-        beneficioSelecionado: globalState.variaveisProcesso.beneficioSelecionado
+        motivoSelecionado: globalState.variaveisProcesso.motivoSelecionado,
+        beneficioSelecionado: globalState.variaveisProcesso.beneficioSelecionado.label,
+        operacaoSelecionada: globalState.variaveisProcesso.operacaoSelecionada,
+        transporteSelecionado: globalState.variaveisProcesso.transporteSelecionado,
+        VTAtual: globalState.variaveisProcesso.VTAtual,
+        novoperiodo: globalState.variaveisProcesso.novoperiodo,
+        escvtr: globalState.variaveisProcesso.escvtr
     }
 
-    const motivoSolicitacao = [
-        { label: 'Alteração de Unidade', cod: 1 },
-        { label: 'Alteração de Escala', cod: 2 },
-        { label: 'Alteração de Endereço', cod: 3 },
-        { label: 'Outros (Justifique)', cod: 4 },
-
-    ]
     const [motivoSelecionado, setMotivoSelecionado] = useState(null)
+    const [transporteSelecionado, setTransportes]= useState(null)
+    const [operacaoSelecionada, setOperacaoSelecionada] = useState(null)
 
     const beneficio = [
         { label: 'Vale Transporte', cod: 1 },
@@ -61,7 +60,7 @@ export default function Tarefa_2() {
         { label: 'Alterar', cod: 2 },
         { label: 'Excluir', cod: 3 },
     ]
-    const [operacaoSelecionada, setOperacaoSelecionada] = useState(null)
+    
 
     const operacaoVale = [
         { label: 'Alterar', cod: 1 },
@@ -84,6 +83,7 @@ export default function Tarefa_2() {
     const [dependente, setDependentes] = useState([])
     const [linhasTransporte, setLinhasTransportes] = useState([{ linha: "teste", cartao: "123" }])
     const [state, setState] = useState(initialState);
+    const [operadoraAtual, setOperadoraAtual] = useState("")
 
     useEffect(() => {
         getColaborador(globalState.usuario.subject).then((param) => {
@@ -124,12 +124,24 @@ export default function Tarefa_2() {
         })
     }, [])
 
+    useEffect(() => {
+        getColaborador(globalState.usuario.subject).then((param) => {
+            setDados(param)
+            getEscalaAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad)
+                .then((data) => {
+                    if (data.escalas.nomevt) {
+                        setOperadoraAtual(data.escalas.nomevt)
+                        setState({ ...state, nomevt: data.escalas.nomevt })
+                    }
+                })
+        })
+    }, [])
+
     // Salvar variaveis do processo
     useEffect(() => {
         GLOBAL.tarefa_2 = state;
+        console.log(state)
     }, [state])
-
-
 
     return (
         <div>
@@ -138,8 +150,7 @@ export default function Tarefa_2() {
                 <ContentDivisor content={"COLABORADOR"}
                     icon={"pi pi-user"} />
                 <InputText className="w-full"
-                    value={dados?.usuario.nomFun}
-                    onChange={({ value }) => setState({ ...state, solicitante: value })}
+                    value={dados?.usuario.numCad + " - " + dados?.usuario.nomFun}
                     readonly
                 />
             </div>
@@ -152,29 +163,90 @@ export default function Tarefa_2() {
                     readonly
                 />
             </div>
-            <div className="col-12 field">
-
-                <ContentDivisor content={"Para qual Período Deseja Solicitar a Alteração?"}
-                />
-
-                <InputText className="w-full" value={dados?.empresa.datfil + ' | ' + dados?.empresa.numEmp + '-' + dados?.empresa.codFil + '-' + dados?.empresa.nomFil}
-                    readonly
-                />
-            </div>
 
             <ContentDivisor content={"BENEFICIOS"}
                 icon={"pi pi-user"} />
 
             <div className="col-12 field">
-                <label> Motivo da solicitação</label>
+                <div className="col-06 field">
+                    <label> Motivo da solicitação</label>
+                    <InputText
+                        value={globalState.variaveisProcesso.motivoSelecionado}
+                        readOnly
+                        className="w-full"
+                    />
+                    <label> Operação. </label>
+                    <InputText
+                        value={globalState.variaveisProcesso.operacaoSelecionada}
+                        readOnly
+                        className="w-full"
+                    />
+                </div>
+
+                <label> Beneficio. </label>
+
                 <InputText
-                    value={globalState.variaveisProcesso.motivoSelecionado}
+                    value={globalState.variaveisProcesso.beneficioSelecionado}
                     readOnly
                     className="w-full"
                 />
-                <label> Beneficio. </label>
+                <label> Nome da operadora de Vale Transporte. </label>
                 <InputText
-                    value={globalState.variaveisProcesso.beneficioSelecionado}
+                    value={globalState.variaveisProcesso.nomevt}
+                    readOnly
+                    className="w-full"
+                />
+                <label> Numero da Linha. </label>
+                <InputText
+                    value={globalState.variaveisProcesso.codlin}
+                    readOnly
+                    className="w-full"
+                />
+                <label> Tipo de Transporte. </label>
+                <InputText
+                    value={globalState.variaveisProcesso.transporteSelecionado}
+                    readOnly
+                    className="w-full"
+                />
+                <label> Valor da Tarifa. </label>
+                <InputText
+                    value={globalState.variaveisProcesso.valor}
+                    readOnly
+                    className="w-full"
+                />
+                <label> Quantidade utilizada para Ida. </label>
+                <InputText
+                    value={globalState.variaveisProcesso.qtdida}
+                    readOnly
+                    className="w-full"
+                />
+                <label> Quantidade utilizada para Volta. </label>
+                <InputText
+                    value={globalState.variaveisProcesso.qtdvolta}
+                    readOnly
+                    className="w-full"
+                />
+                <label> Escala do Vale transporte. </label>
+                <InputText
+                    value={globalState.variaveisProcesso.esc}
+                    readOnly
+                    className="w-full"
+                />
+                <label> Data de inicio. </label>
+                <InputText
+                    value={globalState.variaveisProcesso.novoperiodo}
+                    readOnly
+                    className="w-full"
+                />
+                <label> Linha </label>
+                <InputText
+                    value={globalState.variaveisProcesso.linha}
+                    readOnly
+                    className="w-full"
+                />
+                <label> Cartão </label>
+                <InputText
+                    value={globalState.variaveisProcesso.cartao}
                     readOnly
                     className="w-full"
                 />
@@ -195,7 +267,7 @@ export default function Tarefa_2() {
                         </div>
                         {/* Vale Transporte */}
                         {
-                            beneficioSelecionado?.cod === 1 &&
+                            state.beneficioSelecionado?.cod === 1 &&
                             <>
 
                                 <div className="col-12 field">

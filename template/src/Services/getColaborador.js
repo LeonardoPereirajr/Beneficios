@@ -32,11 +32,9 @@ export default async function getColaborador(user) {
             },
             usuario: {
                 nomFun: response.nomfun,
-                solicitante: response.solicitante,
                 numCad: response.numcad,
                 numEmp: response.numemp,
                 tipCol: response.tipcol,
-                cargo: "Desenvolvedor",
                 escala: response.nomesc,
                 endcep: response.endcep,
                 endrua: response.endrua,

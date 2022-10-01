@@ -16,20 +16,21 @@ export function saveData(data) {
         console.log(taskData)
 
         let retorno = {
-            solicitante: taskData.nomFun,
-            data: new Date(),
             nomevt: taskData.nomevt,
             codlin: taskData.codlin,
             tipo: taskData.tipo,
             valor: taskData.valor,
             qtdida: taskData.qtdida,
-            qtdvolta: taskData.dvolta,
+            qtdvolta: taskData.qtdvolta,
+            novoperiodo: taskData.novoperiodo,
             esc: taskData.esc,
-            datainivale: taskData.datainivale,
             datafimvale: taskData.datafimvale,
             linha: taskData.linha,
             cartao: taskData.cartao,
-            motivoSelecionado: taskData.motivoSelecionado.label
+            motivoSelecionado: taskData.motivoSelecionado.label,
+            operacaoSelecionada: taskData.operacaoSelecionada.label,
+            beneficioSelecionado:taskData.beneficioSelecionado.label,
+            transporteSelecionado: taskData.transporteSelecionado.label,
         }
         return {
             formData: { ...retorno }
@@ -41,14 +42,8 @@ export function saveData(data) {
 function tarefa_2() {
     const decisaoUsuario = data.nextAction.name;
     if (findSring(decisaoUsuario, 'Ajustar') || findSring(decisaoUsuario, 'Reprovar')) {
-        if (!GLOBAL.tarefa_2?.observacao) {
-            alert("Campo observação é obrigatório")
-            saveStop()
-        }
-        console.log(GLOBAL.tarefa_2.observacao)
         return {
             formData: {
-                observacao: GLOBAL.tarefa_2.observacao,
                 decisao: decisaoUsuario
             }
 

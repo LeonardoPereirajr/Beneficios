@@ -24,7 +24,7 @@ export default function Tarefa_1() {
         usuario: globalState.usuario,
         nomevt: null,
         codlin: null,
-        transporteSelecionado:null,
+        transporteSelecionado: "",
         valor: null,
         qtdida: 0,
         qtdvolta: 0,
@@ -37,9 +37,10 @@ export default function Tarefa_1() {
         operacaoSelecionada: null,
         solicitante: null,
         novoperiodo: null,
+        fimperiodo: null,
         inievt: null,
         escvtr: null,
-        operadoraAtual:null
+        operadoraAtual: null
     }
     const motivoSolicitacao = [
         { label: 'Alteração de Unidade', cod: 1 },
@@ -60,7 +61,7 @@ export default function Tarefa_1() {
         { label: 'Odonto', cod: 3 },
         { label: 'VA / VR', cod: 4 },
     ]
-    const[beneficioSelecionado,setBeneficioSelecionado] = useState(null)
+    const [beneficioSelecionado, setBeneficioSelecionado] = useState(null)
 
     const operacao = [
         { label: 'Incluir', cod: 1 },
@@ -89,7 +90,7 @@ export default function Tarefa_1() {
     const [PlanoAtual, setPlanoSaude] = useState("")
     const [DataInclusaoPlano, setInclusaoPlano] = useState("")
     const [dependente, setDependentes] = useState([])
-    const [linhasTransporte, setLinhasTransportes] = useState([{ linha:"", cartao: "" }])
+    const [linhasTransporte, setLinhasTransportes] = useState([{ linha: "", cartao: "" }])
     const [state, setState] = useState(initialState);
 
     useEffect(() => {
@@ -169,7 +170,7 @@ export default function Tarefa_1() {
                     icon={"pi pi-user"} />
                 <InputText
                     className="w-full"
-                    value={dados?.usuario.numCad +" - " +dados?.usuario.nomFun}
+                    value={dados?.usuario.numCad + " - " + dados?.usuario.nomFun}
                     readonly
                 />
             </div>
@@ -259,7 +260,6 @@ export default function Tarefa_1() {
                                     />
                                 </div>
 
-
                                 {
                                     state.operacaoSelecionada?.cod === 1 &&
                                     <>
@@ -340,7 +340,116 @@ export default function Tarefa_1() {
                                         />
 
                                         {
-                                            linhasTransporte.map( l=> (
+                                            linhasTransporte.map(l => (
+                                                <>
+                                                    <div className="col-3 field">
+                                                        <label>
+                                                            Linha 1
+                                                        </label>
+                                                        <InputNumber
+                                                            className="w-full"
+                                                            value={l.linha}
+                                                            onChange={(e) => setState({ ...state, linha: e.value })}
+                                                        />
+                                                    </div>
+                                                    <div className="col-3 field">
+                                                        <label>
+                                                            Numero do Cartão
+                                                        </label>
+                                                        <InputNumber
+                                                            className="w-full"
+                                                            value={l.cartao}
+                                                            onChange={(e) => setState({ ...state, cartao: e.value })}
+                                                        />
+                                                    </div>
+                                                    <div className="col-6 field" />
+                                                </>
+                                            ))
+                                        }
+                                    </>
+                                }
+
+                                {
+                                    state.operacaoSelecionada?.cod === 2 &&
+                                    <>
+
+                                        <div className="col-12 field">
+                                            <label>
+                                                Numero da Linha
+                                            </label>
+                                            <InputNumber
+                                                className="w-full"
+                                                value={state.codlin}
+                                                onChange={(e) => setState({ ...state, codlin: e.value })}
+                                            />
+                                        </div>
+
+                                        <div className="col-12 field">
+                                            <label>
+                                                Tipo de Transporte
+                                            </label>
+                                            <Dropdown
+                                                value={state.transporteSelecionado}
+                                                options={tipoTransporte}
+                                                className="w-full"
+                                                onChange={(e) => setState({ ...state, transporteSelecionado: e.value })}
+                                            />
+                                        </div>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Valor da Tarifa
+                                            </label>
+                                            <InputNumber
+                                                className="w-full"
+                                                value={state.valor}
+                                                onChange={(e) => setState({ ...state, valor: e.value })}
+                                            />
+                                        </div>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Quantidade Utilizada para Ida
+                                            </label>
+                                            <InputNumber
+                                                className="w-full"
+                                                value={state.qtdida}
+                                                onChange={(e) => setState({ ...state, qtdida: e.value })}
+                                            />
+                                        </div>
+                                        <div className="col-12 field">
+                                            <label>
+                                                Quantidade Utilizada para Volta
+                                            </label>
+                                            <InputNumber
+                                                className="w-full"
+                                                value={state.qtdvolta}
+                                                onChange={(volta) => setState({ ...state, qtdvolta: volta.value })}
+                                            />
+                                        </div>
+
+                                        <div className="col-4 field">
+                                            <label>
+                                                Escala Vale Transporte
+                                            </label>
+                                            <InputNumber
+                                                className="w-full"
+                                                value={state.esc}
+                                                onChange={(e) => setState({ ...state, esc: e.value })}
+                                            />
+                                        </div>
+                                        <div className="col-4 field">
+                                            <FieldName required name='Data Início' />
+                                            <Datepicker
+                                                className='w-full'
+                                                value={state.datainivale}
+                                                onChange={(e) => setState({ ...state, datainivale: e.value })}
+                                                inputClassName='obrigatorio'
+                                            />
+                                        </div>
+                                        <ContentDivisor content={"LINHA / CARTÃO"}
+                                        />
+
+                                        {
+                                            linhasTransporte.map(l => (
                                                 <>
                                                     <div className="col-3 field">
                                                         <label>
@@ -369,111 +478,7 @@ export default function Tarefa_1() {
                                     </>
                                 }
                                 {
-                                    operacaoSelecionada?.cod === 2 &&
-                                    <>
-
-                                        <div className="col-12 field">
-                                            <label>
-                                                Nome da Operadora de Vale Transporte
-                                            </label>
-                                            <InputText className="w-full" value={state.nomevt}
-                                            />
-                                        </div>
-
-                                        <div className="col-12 field">
-                                            <label>
-                                                Numero da Linha
-                                            </label>
-                                            <InputNumber className="w-full" value={state.codlin}
-                                            />
-                                        </div>
-
-                                        <div className="col-12 field">
-                                            <label>
-                                                Tipo de Transporte
-                                            </label>
-                                            <InputText className="w-full" value={state.tipo}
-                                            />
-                                        </div>
-                                        <div className="col-12 field">
-                                            <label>
-                                                Valor da Tarifa
-                                            </label>
-                                            <InputNumber className="w-full" value={state.valor}
-                                            />
-                                        </div>
-                                        <div className="col-12 field">
-                                            <label>
-                                                Quantidade Utilizada para Ida
-                                            </label>
-                                            <InputNumber className="w-full" value={state.qtdida}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-12 field">
-                                            <label>
-                                                Quantidade Utilizada para Volta
-                                            </label>
-                                            <InputNumber className="w-full" value={state.qtdvolta}
-                                                readonly
-                                            />
-                                        </div>
-
-                                        <div className="col-4 field">
-                                            <label>
-                                                Escala Vale Transporte
-                                            </label>
-                                            <InputNumber className="w-full" value={state.esc}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className="col-4 field">
-                                            <FieldName required name='Data Início' />
-                                            <Datepicker
-                                                className='w-full'
-                                                inputClassName='obrigatorio'
-                                            />
-                                        </div>
-                                        <div className="col-4 field">
-                                            <FieldName required name='Data Fim' />
-                                            <Datepicker
-                                                className='w-full'
-                                                inputClassName='obrigatorio'
-                                            />
-                                        </div>
-                                        <ContentDivisor content={"LINHA / CARTÃO"}
-                                        />
-
-                                        {
-                                            linhasTransporte.map(l => (
-                                                <>
-                                                    <div className="col-3 field">
-                                                        <label>
-                                                            Linha 1
-                                                        </label>
-                                                        <InputNumber className="w-full" value={l.linha}
-                                                            readonly
-                                                        />
-                                                    </div>
-                                                    <div className="col-3 field">
-                                                        <label>
-                                                            Numero do Cartão
-                                                        </label>
-                                                        <InputNumber className="w-full" value={l.cartao}
-                                                            readonly
-                                                        />
-                                                    </div>
-                                                    <div className="col-6 field" />
-                                                </>
-                                            ))
-                                        }
-                                        <Button> Nova linha
-
-                                        </Button>
-                                    </>
-                                }
-                                {
-                                    operacaoSelecionada?.cod === 3 &&
+                                    state.operacaoSelecionada?.cod === 3 &&
                                     <>
                                         <div className="col-12 field">
                                             <FieldName name='Data Início' />
@@ -487,7 +492,8 @@ export default function Tarefa_1() {
                                             <FieldName required name='Data Fim' />
                                             <Datepicker
                                                 className='w-full'
-                                                inputClassName='obrigatorio'
+                                                value={state.fimperiodo}
+                                                onChange={(e) => setState({ ...state, fimperiodo: e.value })}
                                             />
                                         </div>
                                     </>
@@ -930,144 +936,144 @@ export default function Tarefa_1() {
                         </div>
 
                         <div className="col-12 field">
-                        <ContentDivisor content={"Vale Transporte"}
-                                    />
+                            <ContentDivisor content={"Vale Transporte"}
+                            />
+                            <label>
+                                Escala Vale de transporte Atual
+                            </label>
+                            <InputText
+                                className="w-full"
+                                value={escalaAtual}
+                            />
+                            <label>
+                                Nome da Operadora de Vale Transporte
+                            </label>
+                            <InputText
+                                className="w-full"
+                                value={operadoraAtual}
+                                onChange={(e) => setState({ ...state, operadoraAtual: e.value })}
+                            />
+                        </div>
+
+                        <div className="col-12 field">
+                            <label>Tipo de operação</label>
+                            <Dropdown
+                                value={state.operacaoSelecionada}
+                                options={operacao}
+                                className="w-full"
+                                onChange={(e) => setState({ ...state, operacaoSelecionada: e.value })}
+                            />
+                        </div>
+
+
+                        {
+                            state.operacaoSelecionada?.cod === 1 &&
+                            <>
+
+                                <div className="col-12 field">
                                     <label>
-                                        Escala Vale de transporte Atual
+                                        Numero da Linha
                                     </label>
-                                    <InputText
+                                    <InputNumber
                                         className="w-full"
-                                        value={escalaAtual}
-                                    />
-                                    <label>
-                                        Nome da Operadora de Vale Transporte
-                                    </label>
-                                    <InputText
-                                        className="w-full"
-                                        value={operadoraAtual}
-                                        onChange={(e) => setState({ ...state, operadoraAtual: e.value })}
+                                        value={state.codlin}
+                                        onChange={(e) => setState({ ...state, codlin: e.value })}
                                     />
                                 </div>
 
                                 <div className="col-12 field">
-                                    <label>Tipo de operação</label>
+                                    <label>
+                                        Tipo de Transporte
+                                    </label>
                                     <Dropdown
-                                        value={state.operacaoSelecionada}
-                                        options={operacao}
+                                        value={state.transporteSelecionado}
+                                        options={tipoTransporte}
                                         className="w-full"
-                                        onChange={(e) => setState({ ...state, operacaoSelecionada: e.value })}
+                                        onChange={(e) => setState({ ...state, transporteSelecionado: e.value })}
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Valor da Tarifa
+                                    </label>
+                                    <InputNumber
+                                        className="w-full"
+                                        value={state.valor}
+                                        onChange={(e) => setState({ ...state, valor: e.value })}
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Quantidade Utilizada para Ida
+                                    </label>
+                                    <InputNumber
+                                        className="w-full"
+                                        value={state.qtdida}
+                                        onChange={(e) => setState({ ...state, qtdida: e.value })}
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Quantidade Utilizada para Volta
+                                    </label>
+                                    <InputNumber
+                                        className="w-full"
+                                        value={state.qtdvolta}
+                                        onChange={(volta) => setState({ ...state, qtdvolta: volta.value })}
                                     />
                                 </div>
 
+                                <div className="col-4 field">
+                                    <label>
+                                        Escala Vale Transporte
+                                    </label>
+                                    <InputNumber
+                                        className="w-full"
+                                        value={state.esc}
+                                        onChange={(e) => setState({ ...state, esc: e.value })}
+                                    />
+                                </div>
+                                <div className="col-4 field">
+                                    <FieldName required name='Data Início' />
+                                    <Datepicker
+                                        className='w-full'
+                                        value={state.datainivale}
+                                        onChange={(e) => setState({ ...state, datainivale: e.value })}
+                                        inputClassName='obrigatorio'
+                                    />
+                                </div>
+                                <ContentDivisor content={"LINHA / CARTÃO"}
+                                />
 
                                 {
-                                    state.operacaoSelecionada?.cod === 1 &&
-                                    <>
-
-                                        <div className="col-12 field">
-                                            <label>
-                                                Numero da Linha
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.codlin}
-                                                onChange={(e) => setState({ ...state, codlin: e.value })}
-                                            />
-                                        </div>
-
-                                        <div className="col-12 field">
-                                            <label>
-                                                Tipo de Transporte
-                                            </label>
-                                            <Dropdown
-                                                value={state.transporteSelecionado}
-                                                options={tipoTransporte}
-                                                className="w-full"
-                                                onChange={(e) => setState({ ...state, transporteSelecionado: e.value })}
-                                            />
-                                        </div>
-                                        <div className="col-12 field">
-                                            <label>
-                                                Valor da Tarifa
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.valor}
-                                                onChange={(e) => setState({ ...state, valor: e.value })}
-                                            />
-                                        </div>
-                                        <div className="col-12 field">
-                                            <label>
-                                                Quantidade Utilizada para Ida
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.qtdida}
-                                                onChange={(e) => setState({ ...state, qtdida: e.value })}
-                                            />
-                                        </div>
-                                        <div className="col-12 field">
-                                            <label>
-                                                Quantidade Utilizada para Volta
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.qtdvolta}
-                                                onChange={(volta) => setState({ ...state, qtdvolta: volta.value })}
-                                            />
-                                        </div>
-
-                                        <div className="col-4 field">
-                                            <label>
-                                                Escala Vale Transporte
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.esc}
-                                                onChange={(e) => setState({ ...state, esc: e.value })}
-                                            />
-                                        </div>
-                                        <div className="col-4 field">
-                                            <FieldName required name='Data Início' />
-                                            <Datepicker
-                                                className='w-full'
-                                                value={state.datainivale}
-                                                onChange={(e) => setState({ ...state, datainivale: e.value })}
-                                                inputClassName='obrigatorio'
-                                            />
-                                        </div>
-                                        <ContentDivisor content={"LINHA / CARTÃO"}
-                                        />
-
-                                        {
-                                            linhasTransporte.map( l=> (
-                                                <>
-                                                    <div className="col-3 field">
-                                                        <label>
-                                                            Linha 1
-                                                        </label>
-                                                        <InputNumber
-                                                            className="w-full"
-                                                            value={l.linha}
-                                                            onChange={(e) => setState({ ...state, linha: e.value })}
-                                                        />
-                                                    </div>
-                                                    <div className="col-3 field">
-                                                        <label>
-                                                            Numero do Cartão
-                                                        </label>
-                                                        <InputNumber
-                                                            className="w-full"
-                                                            value={l.cartao}
-                                                            onChange={(e) => setState({ ...state, cartao: e.value })}
-                                                        />
-                                                    </div>
-                                                    <div className="col-6 field" />
-                                                </>
-                                            ))
-                                        }
-                                    </>
+                                    linhasTransporte.map(l => (
+                                        <>
+                                            <div className="col-3 field">
+                                                <label>
+                                                    Linha 1
+                                                </label>
+                                                <InputNumber
+                                                    className="w-full"
+                                                    value={l.linha}
+                                                    onChange={(e) => setState({ ...state, linha: e.value })}
+                                                />
+                                            </div>
+                                            <div className="col-3 field">
+                                                <label>
+                                                    Numero do Cartão
+                                                </label>
+                                                <InputNumber
+                                                    className="w-full"
+                                                    value={l.cartao}
+                                                    onChange={(e) => setState({ ...state, cartao: e.value })}
+                                                />
+                                            </div>
+                                            <div className="col-6 field" />
+                                        </>
+                                    ))
                                 }
+                            </>
+                        }
                         {
                             operacaoSelecionada?.cod === 2 &&
                             <>
@@ -1252,144 +1258,144 @@ export default function Tarefa_1() {
                         </div>
 
                         <div className="col-12 field">
-                        <ContentDivisor content={"Vale Transporte"}
-                                    />
+                            <ContentDivisor content={"Vale Transporte"}
+                            />
+                            <label>
+                                Escala Vale de transporte Atual
+                            </label>
+                            <InputText
+                                className="w-full"
+                                value={escalaAtual}
+                            />
+                            <label>
+                                Nome da Operadora de Vale Transporte
+                            </label>
+                            <InputText
+                                className="w-full"
+                                value={operadoraAtual}
+                                onChange={(e) => setState({ ...state, operadoraAtual: e.value })}
+                            />
+                        </div>
+
+                        <div className="col-12 field">
+                            <label>Tipo de operação</label>
+                            <Dropdown
+                                value={state.operacaoSelecionada}
+                                options={operacao}
+                                className="w-full"
+                                onChange={(e) => setState({ ...state, operacaoSelecionada: e.value })}
+                            />
+                        </div>
+
+
+                        {
+                            state.operacaoSelecionada?.cod === 1 &&
+                            <>
+
+                                <div className="col-12 field">
                                     <label>
-                                        Escala Vale de transporte Atual
+                                        Numero da Linha
                                     </label>
-                                    <InputText
+                                    <InputNumber
                                         className="w-full"
-                                        value={escalaAtual}
-                                    />
-                                    <label>
-                                        Nome da Operadora de Vale Transporte
-                                    </label>
-                                    <InputText
-                                        className="w-full"
-                                        value={operadoraAtual}
-                                        onChange={(e) => setState({ ...state, operadoraAtual: e.value })}
+                                        value={state.codlin}
+                                        onChange={(e) => setState({ ...state, codlin: e.value })}
                                     />
                                 </div>
 
                                 <div className="col-12 field">
-                                    <label>Tipo de operação</label>
+                                    <label>
+                                        Tipo de Transporte
+                                    </label>
                                     <Dropdown
-                                        value={state.operacaoSelecionada}
-                                        options={operacao}
+                                        value={state.transporteSelecionado}
+                                        options={tipoTransporte}
                                         className="w-full"
-                                        onChange={(e) => setState({ ...state, operacaoSelecionada: e.value })}
+                                        onChange={(e) => setState({ ...state, transporteSelecionado: e.value })}
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Valor da Tarifa
+                                    </label>
+                                    <InputNumber
+                                        className="w-full"
+                                        value={state.valor}
+                                        onChange={(e) => setState({ ...state, valor: e.value })}
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Quantidade Utilizada para Ida
+                                    </label>
+                                    <InputNumber
+                                        className="w-full"
+                                        value={state.qtdida}
+                                        onChange={(e) => setState({ ...state, qtdida: e.value })}
+                                    />
+                                </div>
+                                <div className="col-12 field">
+                                    <label>
+                                        Quantidade Utilizada para Volta
+                                    </label>
+                                    <InputNumber
+                                        className="w-full"
+                                        value={state.qtdvolta}
+                                        onChange={(volta) => setState({ ...state, qtdvolta: volta.value })}
                                     />
                                 </div>
 
+                                <div className="col-4 field">
+                                    <label>
+                                        Escala Vale Transporte
+                                    </label>
+                                    <InputNumber
+                                        className="w-full"
+                                        value={state.esc}
+                                        onChange={(e) => setState({ ...state, esc: e.value })}
+                                    />
+                                </div>
+                                <div className="col-4 field">
+                                    <FieldName required name='Data Início' />
+                                    <Datepicker
+                                        className='w-full'
+                                        value={state.datainivale}
+                                        onChange={(e) => setState({ ...state, datainivale: e.value })}
+                                        inputClassName='obrigatorio'
+                                    />
+                                </div>
+                                <ContentDivisor content={"LINHA / CARTÃO"}
+                                />
 
                                 {
-                                    state.operacaoSelecionada?.cod === 1 &&
-                                    <>
-
-                                        <div className="col-12 field">
-                                            <label>
-                                                Numero da Linha
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.codlin}
-                                                onChange={(e) => setState({ ...state, codlin: e.value })}
-                                            />
-                                        </div>
-
-                                        <div className="col-12 field">
-                                            <label>
-                                                Tipo de Transporte
-                                            </label>
-                                            <Dropdown
-                                                value={state.transporteSelecionado}
-                                                options={tipoTransporte}
-                                                className="w-full"
-                                                onChange={(e) => setState({ ...state, transporteSelecionado: e.value })}
-                                            />
-                                        </div>
-                                        <div className="col-12 field">
-                                            <label>
-                                                Valor da Tarifa
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.valor}
-                                                onChange={(e) => setState({ ...state, valor: e.value })}
-                                            />
-                                        </div>
-                                        <div className="col-12 field">
-                                            <label>
-                                                Quantidade Utilizada para Ida
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.qtdida}
-                                                onChange={(e) => setState({ ...state, qtdida: e.value })}
-                                            />
-                                        </div>
-                                        <div className="col-12 field">
-                                            <label>
-                                                Quantidade Utilizada para Volta
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.qtdvolta}
-                                                onChange={(volta) => setState({ ...state, qtdvolta: volta.value })}
-                                            />
-                                        </div>
-
-                                        <div className="col-4 field">
-                                            <label>
-                                                Escala Vale Transporte
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.esc}
-                                                onChange={(e) => setState({ ...state, esc: e.value })}
-                                            />
-                                        </div>
-                                        <div className="col-4 field">
-                                            <FieldName required name='Data Início' />
-                                            <Datepicker
-                                                className='w-full'
-                                                value={state.datainivale}
-                                                onChange={(e) => setState({ ...state, datainivale: e.value })}
-                                                inputClassName='obrigatorio'
-                                            />
-                                        </div>
-                                        <ContentDivisor content={"LINHA / CARTÃO"}
-                                        />
-
-                                        {
-                                            linhasTransporte.map( l=> (
-                                                <>
-                                                    <div className="col-3 field">
-                                                        <label>
-                                                            Linha 1
-                                                        </label>
-                                                        <InputNumber
-                                                            className="w-full"
-                                                            value={l.linha}
-                                                            onChange={(e) => setState({ ...state, linha: e.value })}
-                                                        />
-                                                    </div>
-                                                    <div className="col-3 field">
-                                                        <label>
-                                                            Numero do Cartão
-                                                        </label>
-                                                        <InputNumber
-                                                            className="w-full"
-                                                            value={l.cartao}
-                                                            onChange={(e) => setState({ ...state, cartao: e.value })}
-                                                        />
-                                                    </div>
-                                                    <div className="col-6 field" />
-                                                </>
-                                            ))
-                                        }
-                                    </>
+                                    linhasTransporte.map(l => (
+                                        <>
+                                            <div className="col-3 field">
+                                                <label>
+                                                    Linha 1
+                                                </label>
+                                                <InputNumber
+                                                    className="w-full"
+                                                    value={l.linha}
+                                                    onChange={(e) => setState({ ...state, linha: e.value })}
+                                                />
+                                            </div>
+                                            <div className="col-3 field">
+                                                <label>
+                                                    Numero do Cartão
+                                                </label>
+                                                <InputNumber
+                                                    className="w-full"
+                                                    value={l.cartao}
+                                                    onChange={(e) => setState({ ...state, cartao: e.value })}
+                                                />
+                                            </div>
+                                            <div className="col-6 field" />
+                                        </>
+                                    ))
                                 }
+                            </>
+                        }
                         {
                             operacaoSelecionada?.cod === 2 &&
                             <>
@@ -1542,7 +1548,7 @@ export default function Tarefa_1() {
                                 {/* Vale Transporte */}
 
                                 <div className="col-12 field">
-                                <ContentDivisor content={"Vale Transporte"}
+                                    <ContentDivisor content={"Vale Transporte"}
                                     />
                                     <label>
                                         Escala Vale de transporte Atual
@@ -1652,7 +1658,7 @@ export default function Tarefa_1() {
                                         />
 
                                         {
-                                            linhasTransporte.map( l=> (
+                                            linhasTransporte.map(l => (
                                                 <>
                                                     <div className="col-3 field">
                                                         <label>

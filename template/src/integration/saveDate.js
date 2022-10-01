@@ -23,6 +23,7 @@ export function saveData(data) {
             qtdida: taskData.qtdida,
             qtdvolta: taskData.qtdvolta,
             novoperiodo: taskData.novoperiodo,
+            fimperiodo: taskData.fimperiodo,
             esc: taskData.esc,
             datafimvale: taskData.datafimvale,
             linha: taskData.linha,

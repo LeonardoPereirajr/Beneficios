@@ -948,14 +948,31 @@ export default function Tarefa_1() {
                     state.motivoSelecionado?.cod === 2 &&
                     <>
                         <div className="col-12 field">
+
+                            <ContentDivisor content={"Histórico Atual"}
+                            />
+                            <InputText
+                                className="w-full"
+                                value={dados?.empresa.datfil + ' | ' + dados?.empresa.numEmp + '-' + dados?.empresa.codFil + '-' + dados?.empresa.nomFil}
+                                readonly
+                            />
                             <label>
                                 Para qual Período Deseja Solicitar a Alteração?
                             </label>
                             <InputText className="w-full" value={dados?.empresa.datfil + ' | ' + dados?.usuario.escala}
                                 readonly
                             />
+                        
                         </div>
-                        {/* Vale Transporte motivo 2 */}
+                        <div className="col-12 field">
+                            <label> Escolha o beneficio. </label>
+                            <Dropdown
+                                value={state.beneficioSelecionado}
+                                options={beneficio}
+                                className="w-full"
+                                onChange={(e) => setState({ ...state, beneficioSelecionado: e.value })}
+                            />
+                        </div>
                         {
 
                             state.beneficioSelecionado?.cod === 1 &&

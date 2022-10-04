@@ -15,6 +15,8 @@ import getEscalaAtualColaborador from '../Services/getEscalaAtualColaborador';
 import getPlanoSaudeAtualColaborador from '../Services/getPlanoSaudeAtualColaborador';
 import getDependentesColaborador from '../Services/getDependentesColaborador';
 import ContentDivisor from '../components/ContentDivisor';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 
 
 export default function Tarefa_2() {
@@ -41,7 +43,10 @@ export default function Tarefa_2() {
         VTAtual: globalState.variaveisProcesso.VTAtual,
         novoperiodo: globalState.variaveisProcesso.novoperiodo,
         fimperiodo: globalState.variaveisProcesso.fimperiodo,
-        escvtr: globalState.variaveisProcesso.escvtr
+        escvtr: globalState.variaveisProcesso.escvtr,
+        numerolinha: globalState.variaveisProcesso.codlin,
+        nomelinha: globalState.variaveisProcesso.nomlin,
+        inievt: globalState.variaveisProcesso.inievt
     }
 
     const [motivoSelecionado, setMotivoSelecionado] = useState(null)
@@ -85,6 +90,9 @@ export default function Tarefa_2() {
     const [linhasTransporte, setLinhasTransportes] = useState([{ linha: "teste", cartao: "123" }])
     const [state, setState] = useState(initialState);
     const [operadoraAtual, setOperadoraAtual] = useState("")
+    const [numerolinha, setNumeroLinha] = useState("")
+    const [nomelinha, setNomeLinha] = useState("")
+    const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
         getColaborador(globalState.usuario.subject).then((param) => {
@@ -137,10 +145,36 @@ export default function Tarefa_2() {
                 })
         })
     }, [])
+    useEffect(() => {
+        getColaborador(globalState.usuario.subject).then((param) => {
+            setNumeroLinha(param)
+            getEscalaAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad)
+                .then((l) => {
+                    if (l.escalas.linhas.length > 0) {
+                        // setNumeroLinha(l.escalas.linhas)
+                        setTableData(l.escalas.linhas);
+                    }
+                })
+        })
+    }, [])
+
+    useEffect(() => {
+        getColaborador(globalState.usuario.subject).then((param) => {
+            setNomeLinha(param)
+            getEscalaAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad)
+                .then((n) => {
+                    if (n.escalas.linhas.length > 0) {
+                        // setNomeLinha(n.escalas.linhas)
+                        setTableData(n.escalas.linhas);
+                    }
+                })
+        })
+    }, [])
 
     // Salvar variaveis do processo
     useEffect(() => {
         GLOBAL.tarefa_2 = state;
+        GLOBAL.consultaLinhas = tableData;
         console.log(state)
     }, [state])
 
@@ -158,14 +192,14 @@ export default function Tarefa_2() {
 
             <div className="col-12 field">
 
-                <ContentDivisor content={"Histórico Atual"}
-                />
+                <ContentDivisor content={"HISTÓRICO"}
+                    icon={"pi pi-user"} />
                 <InputText className="w-full" value={dados?.empresa.datfil + ' | ' + dados?.empresa.numEmp + '-' + dados?.empresa.codFil + '-' + dados?.empresa.nomFil}
                     readonly
                 />
             </div>
 
-            <ContentDivisor content={"BENEFICIOS"}
+            <ContentDivisor content={"MOTIVOS"}
                 icon={"pi pi-user"} />
 
 
@@ -185,74 +219,246 @@ export default function Tarefa_2() {
                         className="w-full"
                     />
                 </div>
+                {
+                    globalState.variaveisProcesso.operacaoSelecionada === "Incluir" &&
+                    <>
+                        <ContentDivisor content={"BENEFICIOS"}
+                            icon={"pi pi-user"} />
 
-                <label> Beneficio. </label>
+                        <label> Beneficio. </label>
 
-                <InputText
-                    value={globalState.variaveisProcesso.beneficioSelecionado}
-                    readOnly
-                    className="w-full"
-                />
-                <label> Nome da operadora de Vale Transporte. </label>
-                <InputText
-                    value={globalState.variaveisProcesso.nomevt}
-                    readOnly
-                    className="w-full"
-                />
-                <label> Numero da Linha. </label>
-                <InputText
-                    value={globalState.variaveisProcesso.codlin}
-                    readOnly
-                    className="w-full"
-                />
-                <label> Tipo de Transporte. </label>
-                <InputText
-                    value={globalState.variaveisProcesso.transporteSelecionado}
-                    readOnly
-                    className="w-full"
-                />
-                <label> Valor da Tarifa. </label>
-                <InputText
-                    value={globalState.variaveisProcesso.valor}
-                    readOnly
-                    className="w-full"
-                />
-                <label> Quantidade utilizada para Ida. </label>
-                <InputText
-                    value={globalState.variaveisProcesso.qtdida}
-                    readOnly
-                    className="w-full"
-                />
-                <label> Quantidade utilizada para Volta. </label>
-                <InputText
-                    value={globalState.variaveisProcesso.qtdvolta}
-                    readOnly
-                    className="w-full"
-                />
-                <label> Escala do Vale transporte. </label>
-                <InputText
-                    value={globalState.variaveisProcesso.esc}
-                    readOnly
-                    className="w-full"
-                />
-                <label> Data de inicio. </label>
-                <InputText
-                    value={globalState.variaveisProcesso.novoperiodo}
-                    readOnly
-                    className="w-full"
-                />
-                <label> Linha </label>
-                <InputText
-                    value={globalState.variaveisProcesso.linha}
-                    readOnly
-                    className="w-full"
-                />
-                <label> Cartão </label>
-                <InputText
-                    value={globalState.variaveisProcesso.cartao}
-                    readOnly
-                    className="w-full"
-                />
+                        <InputText
+                            value={globalState.variaveisProcesso.beneficioSelecionado}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Nome da operadora de Vale Transporte. </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.nomevt}
+                            readOnly
+                            className="w-full"
+                        />
+                        <Divider align="left" >  </Divider>
+                        <DataTable
+                            value={tableData}
+                            emptyMessage={'Nenhum resultado encontrado'}
+                            loading={tableData == []}
+                            size='small'
+                            accept='application/pdf'
+                            scrollable
+                            scrollHeight='20rem'
+                            header='Linhas de Vale Transporte'
+                            tableClassName='text-700'
+                        >
+                            <Column
+                                header='Linha'
+                                field='codlin'
+                            />
+                            <Column
+                                header='Nome da Linha'
+                                field='nomlin'
+                            />
+                        </DataTable>
+
+                        <label> Tipo de Transporte. </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.transporteSelecionado}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Valor da Tarifa. </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.valor}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Quantidade utilizada para Ida. </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.qtdida}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Quantidade utilizada para Volta. </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.qtdvolta}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Escala do Vale transporte. </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.escvtr}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Data de inicio. </label>
+                        <InputText
+                            value={new Date(globalState.variaveisProcesso.novoperiodo).toLocaleDateString()}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Linha </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.linha}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Cartão </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.cartao}
+                            readOnly
+                            className="w-full"
+                        />
+                    </>
+                }
+
+                {
+                    globalState.variaveisProcesso.operacaoSelecionada === "Alterar" &&
+                    <>
+                        <ContentDivisor content={"BENEFICIOS"}
+                            icon={"pi pi-user"} />
+
+                        <label> Beneficio. </label>
+
+                        <InputText
+                            value={globalState.variaveisProcesso.beneficioSelecionado}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Nome da operadora de Vale Transporte. </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.nomevt}
+                            readOnly
+                            className="w-full"
+                        />
+                        <Divider align="left" >  </Divider>
+                        <DataTable
+                            value={tableData}
+                            emptyMessage={'Nenhum resultado encontrado'}
+                            loading={tableData == []}
+                            size='small'
+                            accept='application/pdf'
+                            scrollable
+                            scrollHeight='20rem'
+                            header='Linhas de Vale Transporte'
+                            tableClassName='text-700'
+                        >
+                            <Column
+                                header='Linha'
+                                field='codlin'
+                            />
+                            <Column
+                                header='Nome da Linha'
+                                field='nomlin'
+                            />
+                        </DataTable>
+
+                        <label> Tipo de Transporte. </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.transporteSelecionado}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Valor da Tarifa. </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.valor}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Quantidade utilizada para Ida. </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.qtdida}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Quantidade utilizada para Volta. </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.qtdvolta}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Escala do Vale transporte. </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.esc}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Data de inicio. </label>
+                        <InputText
+                            value={new Date(globalState.variaveisProcesso.novoperiodo).toLocaleDateString()}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Linha </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.linha}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Cartão </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.cartao}
+                            readOnly
+                            className="w-full"
+                        />
+                    </>
+                }
+
+{
+                    globalState.variaveisProcesso.operacaoSelecionada === "Excluir" &&
+                    <>
+                        <ContentDivisor content={"BENEFICIOS"}
+                            icon={"pi pi-user"} />
+
+                        <InputText
+                            value={globalState.variaveisProcesso.beneficioSelecionado}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Escala Atual / Data Inclusão. </label>
+                        <InputText
+                            value={globalState.variaveisProcesso.escvtr + " | "+
+                                    globalState.variaveisProcesso.inievt}
+                            readOnly
+                            className="w-full"
+                        />
+
+                        <Divider align="left" >  </Divider>
+                        <DataTable
+                            value={tableData}
+                            emptyMessage={'Nenhum resultado encontrado'}
+                            loading={tableData == []}
+                            size='small'
+                            accept='application/pdf'
+                            scrollable
+                            scrollHeight='20rem'
+                            header='Linhas de Vale Transporte'
+                            tableClassName='text-700'
+                        >
+                            <Column
+                                header='Linha'
+                                field='codlin'
+                            />
+                            <Column
+                                header='Nome da Linha'
+                                field='nomlin'
+                            />
+                        </DataTable>
+
+                        <label> Data de inicio. </label>
+                        <InputText
+                            value={new Date(globalState.variaveisProcesso.novoperiodo).toLocaleDateString()}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Data da Exclusão. </label>
+                        <InputText
+                            value={new Date(globalState.variaveisProcesso.fimperiodo).toLocaleDateString()}
+                            readOnly
+                            className="w-full"
+                        />
+                        
+                    </>
+                }
             </div>
 
             <div className="grid px-2" style={{ display: motivoSelecionado ? "" : "none" }}>

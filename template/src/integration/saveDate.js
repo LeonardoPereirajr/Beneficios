@@ -16,7 +16,6 @@ export function saveData(data) {
         console.log(taskData)
 
         let retorno = {
-            nomevt: taskData.nomevt,
             codlin: taskData.codlin,
             tipo: taskData.tipo,
             valor: taskData.valor,
@@ -32,6 +31,9 @@ export function saveData(data) {
             operacaoSelecionada: taskData.operacaoSelecionada.label,
             beneficioSelecionado:taskData.beneficioSelecionado.label,
             transporteSelecionado: taskData.transporteSelecionado.label,
+            escvtr: taskData.escvtr,
+            inievt: taskData.inievt,
+            nomevt: taskData.nomevt
         }
         return {
             formData: { ...retorno }

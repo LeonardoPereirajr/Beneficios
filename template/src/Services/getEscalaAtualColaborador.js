@@ -16,7 +16,7 @@ export default async function getEscalaAtualColaborador(numemp,tipcol,numcad) {
         redirect: 'follow'
     };
 
-    let url = "https://portalrh.alliar.com:8183/SXI/G5Rest?module=rubi&service=com.senior.xplatform.bpm&server=https://portalrh.alliar.com:8183&port=consulta_colaboradores_escalas_transporte"
+    let url = "https://portalrh.alliar.com:8183/SXI/G5Rest?service=com.senior.xplatform.bpm&server=https://portalrh.alliar.com:8183&port=consulta_colaboradores_escalas_transporte&module=bs"
 
     let retorno;
     try {

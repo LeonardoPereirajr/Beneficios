@@ -21,7 +21,7 @@ export function saveData(data) {
             valor: taskData.valor,
             qtdida: taskData.qtdida,
             qtdvolta: taskData.qtdvolta,
-            novoperiodo: taskData.novoperiodo,
+            novoperiodo: taskData.datainivale,
             fimperiodo: taskData.fimperiodo,
             esc: taskData.esc,
             datafimvale: taskData.datafimvale,
@@ -29,7 +29,7 @@ export function saveData(data) {
             cartao: taskData.cartao,
             motivoSelecionado: taskData.motivoSelecionado.label,
             operacaoSelecionada: taskData.operacaoSelecionada.label,
-            beneficioSelecionado:taskData.beneficioSelecionado.label,
+            beneficioSelecionado: taskData.beneficioSelecionado.label,
             transporteSelecionado: taskData.transporteSelecionado.label,
             escvtr: taskData.escvtr,
             inievt: taskData.inievt,
@@ -42,20 +42,21 @@ export function saveData(data) {
     saveStop()
 
 
-function tarefa_2() {
-    const decisaoUsuario = data.nextAction.name;
-    if (findSring(decisaoUsuario, 'Ajustar') || findSring(decisaoUsuario, 'Reprovar')) {
-        return {
-            formData: {
-                decisao: decisaoUsuario
-            }
+    function tarefa_2() {
+        const decisaoUsuario = data.nextAction.name;
+        console.log(GLOBAL)
+        if (findSring(decisaoUsuario, 'Ajustar') || findSring(decisaoUsuario, 'Reprovar')) {
+            return {
+                formData: {
+                    decisao: decisaoUsuario
+                }
 
-        }
-    } else {
-        return {
-            formData: { decisao: decisaoUsuario }
+            }
+        } else {
+            return {
+                formData: { decisao: decisaoUsuario }
+            }
         }
     }
-}
-return { tarefa_1, tarefa_2 }
+    return { tarefa_1, tarefa_2 }
 }

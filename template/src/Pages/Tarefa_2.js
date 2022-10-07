@@ -17,6 +17,7 @@ import getDependentesColaborador from '../Services/getDependentesColaborador';
 import ContentDivisor from '../components/ContentDivisor';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import getEscalasLinhas from '../Services/getEscalasLinhas';
 
 
 export default function Tarefa_2() {
@@ -92,22 +93,24 @@ export default function Tarefa_2() {
     const [operadoraAtual, setOperadoraAtual] = useState("")
     const [numerolinha, setNumeroLinha] = useState("")
     const [nomelinha, setNomeLinha] = useState("")
-    const [tableData, setTableData] = useState([]);
+    const [tableData, setTableData] = useState([])
+    const [linhasEscala, setLinhasEscala] = useState([])
+    const [linhaSelecionada, setLinhaSelecionada] = useState(null)
 
-    useEffect(() => {
-        getColaborador(globalState.usuario.subject).then((param) => {
-            setDados(param)
-            getEscalaAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad, param.usuario.dependentes)
-                .then((data) => {
-                    if (data.escalas.nomevt) {
-                        setVTAtual(data.escalas.nomevt)
-                    }
-                    if (data.escalas.inievt) {
-                        setInclusaoVT(data.escalas.inievt)
-                    }
-                })
-        })
-    }, [])
+    // useEffect(() => {
+    //     getColaborador(globalState.usuario.subject).then((param) => {
+    //         setDados(param)
+    //         getEscalaAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad, param.usuario.dependentes)
+    //             .then((data) => {
+    //                 if (data.escalas.nomevt) {
+    //                     setVTAtual(data.escalas.nomevt)
+    //                 }
+    //                 if (data.escalas.inievt) {
+    //                     setInclusaoVT(data.escalas.inievt)
+    //                 }
+    //             })
+    //     })
+    // }, [])
 
     useEffect(() => {
         getColaborador(globalState.usuario.subject).then((param) => {
@@ -145,6 +148,7 @@ export default function Tarefa_2() {
                 })
         })
     }, [])
+
     useEffect(() => {
         getColaborador(globalState.usuario.subject).then((param) => {
             setNumeroLinha(param)
@@ -168,8 +172,17 @@ export default function Tarefa_2() {
                         setTableData(n.escalas.linhas);
                     }
                 })
+            getEscalasLinhas(param.usuario.numEmp, param.usuario.codFil).then((li) => {
+                if (li.escalas.length > 0) {
+                    li.escalas.map(p => {
+                        p.label = `${p.escvtr} - ${p.nomevt}`
+                    })
+                    setLinhasEscala(li.escalas)
+                }
+            })
         })
     }, [])
+
 
     // Salvar variaveis do processo
     useEffect(() => {
@@ -234,7 +247,13 @@ export default function Tarefa_2() {
                         />
                         <label> Nome da operadora de Vale Transporte. </label>
                         <InputText
-                            value={globalState.variaveisProcesso.nomevt}
+                            value={state.nomevt}
+                            readOnly
+                            className="w-full"
+                        />
+                        <label> Escala do Vale transporte. </label>
+                        <InputText
+                            value={state.escvtr}
                             readOnly
                             className="w-full"
                         />
@@ -262,7 +281,7 @@ export default function Tarefa_2() {
 
                         <label> Tipo de Transporte. </label>
                         <InputText
-                            value={globalState.variaveisProcesso.transporteSelecionado}
+                            value={state.transporteSelecionado}
                             readOnly
                             className="w-full"
                         />
@@ -284,19 +303,46 @@ export default function Tarefa_2() {
                             readOnly
                             className="w-full"
                         />
-                        <label> Escala do Vale transporte. </label>
-                        <InputText
-                            value={globalState.variaveisProcesso.escvtr}
-                            readOnly
-                            className="w-full"
-                        />
                         <label> Data de inicio. </label>
                         <InputText
                             value={new Date(globalState.variaveisProcesso.novoperiodo).toLocaleDateString()}
                             readOnly
                             className="w-full"
                         />
-                        <label> Linha </label>
+                        <ContentDivisor content={"Escala Vale Transporte"}
+                        />
+                        <Dropdown
+                            value={linhaSelecionada}
+                            options={linhasEscala}
+                            className="w-full"
+                            onChange={(e) => setLinhaSelecionada(e.value)}
+                        />
+                        <ContentDivisor content={"Linhas-------------------------------------Cartão"}
+                        />
+                        {
+                            linhaSelecionada?.linhas.length > 0 && linhaSelecionada.linhas?.map((l, i) => (
+                                <div className="col-6 flex">
+                                    <InputText className="w-full" value={`${l.codlin} - ${l.nomlin}`}
+                                        readonly
+                                    />
+                                    <div className="col-6 flex">
+                                        <InputNumber
+                                            className="w-full"
+                                            value={l?.cartao}
+                                            onChange={(e) => {
+                                                let linhasCopy = Array.from(linhaSelecionada.linhas)
+                                                linhasCopy[i].cartao = e.value
+                                                setLinhaSelecionada({ ...linhaSelecionada, linhas: linhasCopy })
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            ))
+
+                        }
+
+
+                        {/* <label> Linha </label>
                         <InputText
                             value={globalState.variaveisProcesso.linha}
                             readOnly
@@ -307,7 +353,7 @@ export default function Tarefa_2() {
                             value={globalState.variaveisProcesso.cartao}
                             readOnly
                             className="w-full"
-                        />
+                        /> */}
                     </>
                 }
 
@@ -403,7 +449,7 @@ export default function Tarefa_2() {
                     </>
                 }
 
-{
+                {
                     globalState.variaveisProcesso.operacaoSelecionada === "Excluir" &&
                     <>
                         <ContentDivisor content={"BENEFICIOS"}
@@ -416,8 +462,8 @@ export default function Tarefa_2() {
                         />
                         <label> Escala Atual / Data Inclusão. </label>
                         <InputText
-                            value={globalState.variaveisProcesso.escvtr + " | "+
-                                    globalState.variaveisProcesso.inievt}
+                            value={globalState.variaveisProcesso.escvtr + " | " +
+                                globalState.variaveisProcesso.inievt}
                             readOnly
                             className="w-full"
                         />
@@ -456,7 +502,7 @@ export default function Tarefa_2() {
                             readOnly
                             className="w-full"
                         />
-                        
+
                     </>
                 }
             </div>

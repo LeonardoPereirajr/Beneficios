@@ -17,6 +17,7 @@ import getDependentesColaborador from '../Services/getDependentesColaborador';
 import ContentDivisor from '../components/ContentDivisor';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import getValesColaborador from '../Services/getValesColaborador';
 
 
 export default function Tarefa_1() {
@@ -44,7 +45,8 @@ export default function Tarefa_1() {
         escvtr: null,
         operadoraAtual: null,
         numerolinha: null,
-        nomelinha: null
+        nomelinha: null,
+        codval: null
     }
     const motivoSolicitacao = [
         { label: 'Alteração de Unidade', cod: 1 },
@@ -91,14 +93,16 @@ export default function Tarefa_1() {
     const [operadoraAtual, setOperadoraAtual] = useState("")
     const [DataInclusaoVT, setInclusaoVT] = useState("")
     const [escalaAtual, setEscalaAtual] = useState("")
-    const [PlanoAtual, setPlanoSaude] = useState("")
+    const [planoAtual, setPlanoSaude] = useState("")
     const [DataInclusaoPlano, setInclusaoPlano] = useState("")
     const [dependente, setDependentes] = useState([])
     const [linhasTransporte, setLinhasTransportes] = useState([{ linha: "", cartao: "" }])
     const [state, setState] = useState(initialState);
     const [numerolinha, setNumeroLinha] = useState("")
     const [nomelinha, setNomeLinha] = useState("")
-    const [tableData, setTableData] = useState([]);
+    const [tableData, setTableData] = useState([])
+    const [vales, setVales] = useState([])
+
 
     useEffect(() => {
         getColaborador(globalState.usuario.subject).then((param) => {
@@ -170,23 +174,27 @@ export default function Tarefa_1() {
 
     useEffect(() => {
         getColaborador(globalState.usuario.subject).then((param) => {
+            setPlanoSaude(param)
             getPlanoSaudeAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad)
-                .then((data) => {
-                    if (data.colaboradores.length > 0) {
-                        setPlanoSaude(data.colaboradores)
+                .then((col) => {
+                    if (col.colaboradores.length > 0) {
+                        setPlanoSaude(col.colaboradores)
                     }
                 })
         })
     }, [])
 
-    // useEffect(() => {
-    //     getColaborador(globalState.usuario.subject).then((dados) => {
-    //         if (dados.usuario.nomFun) {
-    //             setDados(dados.usuario.nomFun)
-    //             setState({ ...state, solicitante: dados.usuario.nomFun })
-    //         }
-    //     })
-    // }, [])
+    useEffect(() => {
+        getColaborador(globalState.usuario.subject).then((param) => {
+            setVales(param)
+            getValesColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad)
+                .then((v) => {
+                    if (v.vales.length > 0) {
+                        setVales(v.vales)
+                    }
+                })
+        })
+    }, [])
 
 
     // Salvar variaveis do processo
@@ -262,6 +270,7 @@ export default function Tarefa_1() {
                                     <InputText
                                         className="w-full"
                                         value={escalaAtual}
+                                        onChange={(t) => setState({ ...state, nomevt: t.value })}
                                     />
                                     <label>
                                         Nome da Operadora de Vale Transporte
@@ -345,7 +354,7 @@ export default function Tarefa_1() {
                                             </label>
                                             <InputText
                                                 className="w-full"
-                                                value={state.nomevt}
+                                                value={operadoraAtual}
                                                 onChange={(e) => setState({ ...state, nomevt: e.value })}
                                             />
                                             <label>
@@ -541,14 +550,21 @@ export default function Tarefa_1() {
                                 <div className="col-12 field">
                                     <ContentDivisor content={"Plano de Saúde"}
                                     />
-                                    {console.log("Plano atual : ", PlanoAtual)}
+                                    {console.log("Plano atual : ", planoAtual)}
                                     <label>
                                         Plano Titular Atual + Data Inclusão
                                     </label>
 
-                                    <InputText className="w-full" value={PlanoAtual}
-                                        readonly
-                                    />
+                                    {
+                                        planoAtual.length > 0 && planoAtual?.map(col => (
+                                            <div className="col-8 flex flex-column mb-2">
+                                                <InputText className="w-full" value={col.nompla + " -  " + col.mesinc}
+                                                    readonly
+                                                />
+                                            </div>
+                                        ))
+
+                                    }
                                 </div>
 
                                 <div className="col-12 field">
@@ -627,7 +643,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Plano Titular
                                             </label>
-                                            <InputText className="w-full" value={PlanoAtual + ' | ' + DataInclusaoPlano}
+                                            <InputText className="w-full" value={planoAtual + ' | ' + DataInclusaoPlano}
                                                 readonly
                                             />
                                         </div>
@@ -685,7 +701,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Plano Titular Atual
                                             </label>
-                                            <InputText className="w-full" value={PlanoAtual + ' | ' + DataInclusaoPlano}
+                                            <InputText className="w-full" value={planoAtual + ' | ' + DataInclusaoPlano}
                                                 readonly
                                             />
                                         </div>
@@ -730,7 +746,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Plano Titular Atual
                                             </label>
-                                            <InputText className="w-full" value={PlanoAtual + ' | ' + DataInclusaoPlano}
+                                            <InputText className="w-full" value={planoAtual + ' | ' + DataInclusaoPlano}
                                                 readonly
                                             />
                                         </div>
@@ -836,57 +852,98 @@ export default function Tarefa_1() {
                                     />
                                 </div>
 
-                                <div className="col-12 field">
+                                <ContentDivisor content={"Vales anterior"} />
+                                {
+
+                                    vales.length > 0 && vales?.map(v => (
+                                        <div className="col-6 flex flex-column mb-2">
+                                            <label>
+                                                Codigo do vale
+                                            </label>
+                                            <InputText className="w-full" value={v.codval}
+                                                readonly
+                                            />
+                                        </div>
+                                    ))
+
+                                }
+                                <div className="col-6 field">
                                     <label>
-                                        Codigo do Vale Anterior
+                                        Tipo Vale
                                     </label>
-                                    <InputText className="w-full" value={""}
-                                        readonly
+                                    <InputText className="w-full" value={"VA"}
                                     />
                                 </div>
                                 <div className="col-6 field">
                                     <label>
                                         Tipo Vale
                                     </label>
-                                    <InputText className="w-full" value={""}
+                                    <InputText className="w-full" value={"VR"}
                                     />
                                 </div>
-                                <div className="col-6 field">
-                                    <label>
-                                        Quantidade Vales
-                                    </label>
-                                    <InputText className="w-full" value={""}
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Quantidade Dia útil
-                                    </label>
-                                    <InputText className="w-full" value={""}
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Quantidade Sábado
-                                    </label>
-                                    <InputText className="w-full" value={""}
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Quantidade Domingo
-                                    </label>
-                                    <InputText className="w-full" value={""}
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Quantidade Feriado
-                                    </label>
-                                    <InputText className="w-full" value={""}
-                                    />
 
-                                </div>
+                                {
+
+                                    vales.length > 0 && vales?.map(v => (
+                                        <div className="col-6 flex flex-column mb-2">
+                                            <label>
+                                                Quantidade Vales
+                                            </label>
+                                            <InputText className="w-full" value={v.qtdval}
+                                                readonly
+                                            />
+                                        </div>
+                                    ))
+
+                                }
+                                {
+                                    vales.length > 0 && vales?.map(v => (
+                                        <div className="col-6 flex flex-column mb-2">
+                                            <label>
+                                                Quantidade Dia Util
+                                            </label>
+                                            <InputText className="w-full" value={v.qtduti}
+                                                readonly
+                                            />
+                                        </div>
+                                    ))
+                                }
+                                {
+                                    vales.length > 0 && vales?.map(v => (
+                                        <div className="col-6 flex flex-column mb-2">
+                                            <label>
+                                                Quantidade Sabado
+                                            </label>
+                                            <InputText className="w-full" value={v.qtdsab}
+                                                readonly
+                                            />
+                                        </div>
+                                    ))
+                                }
+                                {
+                                    vales.length > 0 && vales?.map(v => (
+                                        <div className="col-6 flex flex-column mb-2">
+                                            <label>
+                                                Quantidade Domingo
+                                            </label>
+                                            <InputText className="w-full" value={v.qtddom}
+                                                readonly
+                                            />
+                                        </div>
+                                    ))
+                                }
+                                {
+                                    vales.length > 0 && vales?.map(v => (
+                                        <div className="col-6 flex flex-column mb-2">
+                                            <label>
+                                                Quantidade Feriado
+                                            </label>
+                                            <InputText className="w-full" value={v.qtdfer}
+                                                readonly
+                                            />
+                                        </div>
+                                    ))
+                                }
                                 <div className="col-12 field">
                                     <label>
                                         Codigo do Vale
@@ -962,7 +1019,7 @@ export default function Tarefa_1() {
                             <InputText className="w-full" value={dados?.empresa.datfil + ' | ' + dados?.usuario.escala}
                                 readonly
                             />
-                        
+
                         </div>
                         <div className="col-12 field">
                             <label> Escolha o beneficio. </label>
@@ -1680,48 +1737,6 @@ export default function Tarefa_1() {
                                                 onChange={(volta) => setState({ ...state, qtdvolta: volta.value })}
                                             />
                                         </div>
-
-                                        {/* <div className="col-4 field">
-                                            <label>
-                                                Escala Vale Transporte
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.esc}
-                                                onChange={(e) => setState({ ...state, escvtr: e.value })}
-                                            />
-                                        </div> */}
-
-                                        {/* <ContentDivisor content={"LINHA / CARTÃO"}
-                                        />
-
-                                        {
-                                            linhasTransporte.map(l => (
-                                                <>
-                                                    <div className="col-3 field">
-                                                        <label>
-                                                            Linha 1
-                                                        </label>
-                                                        <InputNumber
-                                                            className="w-full"
-                                                            value={l.linha}
-                                                            onChange={(e) => setState({ ...state, linha: e.value })}
-                                                        />
-                                                    </div>
-                                                    <div className="col-3 field">
-                                                        <label>
-                                                            Numero do Cartão
-                                                        </label>
-                                                        <InputNumber
-                                                            className="w-full"
-                                                            value={l.cartao}
-                                                            onChange={(e) => setState({ ...state, cartao: e.value })}
-                                                        />
-                                                    </div>
-                                                    <div className="col-6 field" />
-                                                </>
-                                            ))
-                                        } */}
                                     </>
                                 }
 
@@ -1832,9 +1847,20 @@ export default function Tarefa_1() {
                                         Plano Titular Atual + Data Inclusão
                                     </label>
                                     {console.log(state)}
-                                    <InputText className="w-full" value={PlanoAtual + ' | ' + DataInclusaoPlano}
-                                        readonly
-                                    />
+                                    <label>
+                                        Plano Titular Atual + Data Inclusão
+                                    </label>
+
+                                    {
+                                        planoAtual.length > 0 && planoAtual?.map(col => (
+                                            <div className="col-8 flex flex-column mb-2">
+                                                <InputText className="w-full" value={col.nompla + " -  " + col.mesinc}
+                                                    readonly
+                                                />
+                                            </div>
+                                        ))
+
+                                    }
                                 </div>
 
                                 <div className="col-12 field">
@@ -1972,7 +1998,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Plano Titular Atual
                                             </label>
-                                            <InputText className="w-full" value={PlanoAtual + ' | ' + DataInclusaoPlano}
+                                            <InputText className="w-full" value={planoAtual + ' | ' + DataInclusaoPlano}
                                                 readonly
                                             />
                                         </div>
@@ -2016,7 +2042,7 @@ export default function Tarefa_1() {
                                             <label>
                                                 Plano Titular Atual
                                             </label>
-                                            <InputText className="w-full" value={PlanoAtual + ' | ' + DataInclusaoPlano}
+                                            <InputText className="w-full" value={planoAtual + ' | ' + DataInclusaoPlano}
                                                 readonly
                                             />
                                         </div>
@@ -2122,57 +2148,98 @@ export default function Tarefa_1() {
                                     />
                                 </div>
 
-                                <div className="col-12 field">
+                                <ContentDivisor content={"Vales anterior"} />
+                                {
+
+                                    vales.length > 0 && vales?.map(v => (
+                                        <div className="col-6 flex flex-column mb-2">
+                                            <label>
+                                                Codigo do vale
+                                            </label>
+                                            <InputText className="w-full" value={v.codval}
+                                                readonly
+                                            />
+                                        </div>
+                                    ))
+
+                                }
+                                <div className="col-6 field">
                                     <label>
-                                        Codigo do Vale Anterior
+                                        Tipo Vale
                                     </label>
-                                    <InputText className="w-full" value={""}
-                                        readonly
+                                    <InputText className="w-full" value={"VA"}
                                     />
                                 </div>
                                 <div className="col-6 field">
                                     <label>
                                         Tipo Vale
                                     </label>
-                                    <InputText className="w-full" value={""}
+                                    <InputText className="w-full" value={"VR"}
                                     />
                                 </div>
-                                <div className="col-6 field">
-                                    <label>
-                                        Quantidade Vales
-                                    </label>
-                                    <InputText className="w-full" value={""}
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Quantidade Dia útil
-                                    </label>
-                                    <InputText className="w-full" value={""}
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Quantidade Sábado
-                                    </label>
-                                    <InputText className="w-full" value={""}
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Quantidade Domingo
-                                    </label>
-                                    <InputText className="w-full" value={""}
-                                    />
-                                </div>
-                                <div className="col-3 field">
-                                    <label>
-                                        Quantidade Feriado
-                                    </label>
-                                    <InputText className="w-full" value={""}
-                                    />
 
-                                </div>
+                                {
+
+                                    vales.length > 0 && vales?.map(v => (
+                                        <div className="col-6 flex flex-column mb-2">
+                                            <label>
+                                                Quantidade Vales
+                                            </label>
+                                            <InputText className="w-full" value={v.qtdval}
+                                                readonly
+                                            />
+                                        </div>
+                                    ))
+
+                                }
+                                {
+                                    vales.length > 0 && vales?.map(v => (
+                                        <div className="col-6 flex flex-column mb-2">
+                                            <label>
+                                                Quantidade Dia Util
+                                            </label>
+                                            <InputText className="w-full" value={v.qtduti}
+                                                readonly
+                                            />
+                                        </div>
+                                    ))
+                                }
+                                {
+                                    vales.length > 0 && vales?.map(v => (
+                                        <div className="col-6 flex flex-column mb-2">
+                                            <label>
+                                                Quantidade Sabado
+                                            </label>
+                                            <InputText className="w-full" value={v.qtdsab}
+                                                readonly
+                                            />
+                                        </div>
+                                    ))
+                                }
+                                {
+                                    vales.length > 0 && vales?.map(v => (
+                                        <div className="col-6 flex flex-column mb-2">
+                                            <label>
+                                                Quantidade Domingo
+                                            </label>
+                                            <InputText className="w-full" value={v.qtddom}
+                                                readonly
+                                            />
+                                        </div>
+                                    ))
+                                }
+                                {
+                                    vales.length > 0 && vales?.map(v => (
+                                        <div className="col-6 flex flex-column mb-2">
+                                            <label>
+                                                Quantidade Feriado
+                                            </label>
+                                            <InputText className="w-full" value={v.qtdfer}
+                                                readonly
+                                            />
+                                        </div>
+                                    ))
+                                }
                                 <div className="col-12 field">
                                     <label>
                                         Codigo do Vale

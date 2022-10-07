@@ -16,7 +16,7 @@ export default async function getPlanoSaudeAtualColaborador(numemp,tipcol,numcad
         redirect: 'follow'
     };
 
-    let url = "https://portalrh.alliar.com:8183/SXI/G5Rest?module=rubi&service=com.senior.xplatform.bpm&server=https://portalrh.alliar.com:8183&port=consulta_colaboradores_planos";
+    let url = "https://portalrh.alliar.com:8183/SXI/G5Rest?service=com.senior.xplatform.bpm&server=https://portalrh.alliar.com:8183&port=consulta_colaboradores_planos&module=bs";
 
     let retorno;
     try {

@@ -22,3 +22,7 @@
 .p-datatable .p-datatable-tbody>tr.p-highlight {
   background-color: #b3d8f85c !important;
 }
+
+.p-dropdown-panel .p-dropdown-items{
+  max-height: 10rem;
+}

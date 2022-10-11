@@ -46,7 +46,9 @@ export default function Tarefa_1() {
         operadoraAtual: null,
         numerolinha: null,
         nomelinha: null,
-        codval: null
+        codval: null,
+        datainiescala: null,
+        inclusoes:[{}]
     }
     const motivoSolicitacao = [
         { label: 'Alteração de Unidade', cod: 1 },
@@ -104,31 +106,16 @@ export default function Tarefa_1() {
     const [vales, setVales] = useState([])
 
 
-    useEffect(() => {
-        getColaborador(globalState.usuario.subject).then((param) => {
-            setDados(param)
-            getEscalaAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad)
-                .then((data) => {
-                    if (data.escalas.nomevt) {
-                        setOperadoraAtual(data.escalas.nomevt)
-                        setState({ ...state, nomevt: data.escalas.nomevt })
-                    }
-                })
-        })
-    }, [])
 
     useEffect(() => {
         getColaborador(globalState.usuario.subject).then((param) => {
             setDados(param)
             getEscalaAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad)
                 .then((data) => {
-                    if (data.escalas.inievt) {
-                        setInclusaoVT(data.escalas.inievt)
-                        setState({ ...state, inievt: data.escalas.inievt })
-                    }
-                    if (data.escalas.escvtr) {
-                        setEscalaAtual(data.escalas.escvtr)
-                        setState({ ...state, escvtr: data.escalas.escvtr })
+                    if (data.escalas?.length > 0) {
+                        setEscalaAtual(data.escalas)
+                        setState({ ...state, escvtr: data.escalas })
+                        // setState({ ...state, nomevt: data.escalas.nomevt })
                     }
                 })
         })
@@ -215,6 +202,13 @@ export default function Tarefa_1() {
                     value={dados?.usuario.numCad + " - " + dados?.usuario.nomFun}
                     readonly
                 />
+                <ContentDivisor content={"EMPRESA | FILIAL"}
+                icon={"pi pi-user"}/>
+                <InputText
+                    className="w-full"
+                    value={dados?.empresa.numEmp + '-' + dados?.empresa.codFil + '-' + dados?.empresa.nomFil}
+                    readonly
+                />
             </div>
 
             <ContentDivisor content={"BENEFICIOS"}
@@ -265,21 +259,21 @@ export default function Tarefa_1() {
                                     <ContentDivisor content={"Vale Transporte"}
                                     />
                                     <label>
-                                        Escala Vale Transporte Atual
+                                        Escala Vale Transporte Atual / Nome Operadora
                                     </label>
-                                    <InputText
-                                        className="w-full"
-                                        value={escalaAtual}
-                                        onChange={(t) => setState({ ...state, nomevt: t.value })}
-                                    />
-                                    <label>
-                                        Nome da Operadora de Vale Transporte
-                                    </label>
-                                    <InputText
-                                        className="w-full"
-                                        value={operadoraAtual}
-                                        onChange={(e) => setState({ ...state, nomevt: e.value })}
-                                    />
+
+                                    {
+                                        escalaAtual.length > 0 && escalaAtual?.map(e => (
+
+                                            <>
+                                                <InputText
+                                                    className="w-full mb-2"
+                                                    value={` ${e.escvtr}  -  ${e.inievt}  -  ${e.nomevt}`}
+                                                // onChange={(t) => setState({ ...state, nomevt: t.value })}
+                                                />
+                                            </>
+                                        ))
+                                    }
                                     <Divider align="left" > Linhas </Divider>
                                     <DataTable
                                         value={tableData}
@@ -338,8 +332,117 @@ export default function Tarefa_1() {
                                 </div>
 
                                 {
-                                    state.operacaoSelecionada?.cod === 1 &&
+                                    state.operacaoSelecionada?.cod === 1 && state.inclusoes.map((p,i)=>(
+                                        <>
+                                        <div className="col-12 field">
+                                            <FieldName required name='Data Início' />
+                                            <Datepicker
+                                                className='w-full'
+                                                value={p.datainivale}
+                                                onChange={(e)=>{
+                                                    let inclusoesCopy= Array.from(state.inclusoes)
+                                                    inclusoesCopy[i].datainivale=e.value
+                                                    setState({...state,inclusoes: inclusoesCopy})
+                                                }}
+                                                inputClassName='obrigatorio'
+                                            />
+
+                                            <label>
+                                                Nome da Operadora
+                                            </label>
+                                            <InputText
+                                                className="w-full"
+                                                value={p.nomevt}
+                                                onChange={(e)=>{
+                                                    let inclusoesCopy= Array.from(state.inclusoes)
+                                                    inclusoesCopy[i].nomevt=e.target.value
+                                                    setState({...state,inclusoes: inclusoesCopy})
+                                                }}
+                                            />
+                                            <label>
+                                                Numero da Linha
+                                            </label>
+                                            <InputNumber
+                                                className="w-full"
+                                                value={p.codlin}
+                                                onChange={(e)=>{
+                                                    let inclusoesCopy= Array.from(state.inclusoes)
+                                                    inclusoesCopy[i].codlin=e.value
+                                                    setState({...state,inclusoes: inclusoesCopy})
+                                                }}
+                                            />
+
+                                            <label>
+                                                Tipo de Transporte
+                                            </label>
+                                            <Dropdown
+                                                value={p.transporteSelecionado}
+                                                options={tipoTransporte}
+                                                className="w-full"
+                                                onChange={(e)=>{
+                                                    let inclusoesCopy= Array.from(state.inclusoes)
+                                                    inclusoesCopy[i].transporteSelecionado=e.value
+                                                    setState({...state,inclusoes: inclusoesCopy})
+                                                }}
+                                            />
+
+                                            <label>
+                                                Valor da Tarifa
+                                            </label>
+                                            <InputNumber
+                                                className="w-full"
+                                                value={p.valor}
+                                                mode="decimal" minFractionDigits={2}
+                                                onChange={(e)=>{
+                                                    let inclusoesCopy= Array.from(state.inclusoes)
+                                                    inclusoesCopy[i].valor=e.value
+                                                    setState({...state,inclusoes: inclusoesCopy})
+                                                }}
+                                            />
+                                            <label>
+                                                Quantidade Utilizada para Ida
+                                            </label>
+                                            <InputNumber
+                                                className="w-full"
+                                                value={p.qtdida}
+                                                onChange={(e)=>{
+                                                    let inclusoesCopy= Array.from(state.inclusoes)
+                                                    inclusoesCopy[i].qtdida=e.value
+                                                    setState({...state,inclusoes: inclusoesCopy})
+                                                }}
+                                            />
+                                            <label>
+                                                Quantidade Utilizada para Volta
+                                            </label>
+                                            <InputNumber
+                                                className="w-full"
+                                                value={p.qtdvolta}
+                                                onChange={(e)=>{
+                                                    let inclusoesCopy= Array.from(state.inclusoes)
+                                                    inclusoesCopy[i].qtdvolta=e.target.value
+                                                    setState({...state,inclusoes: inclusoesCopy})
+                                                }}
+                                            />
+                                        </div>
+                                           <Button
+                                                icon="pi pi-plus"
+                                                className='p-button-rounded'
+                                                onClick={()=> {
+                                                    let inclusoesCopy = Array.from(state.inclusoes)
+                                                    inclusoesCopy.push({})
+                                                    setState({...state,inclusoes: inclusoesCopy})
+                                                }}
+                                            />     
+
+                                    </>
+                                    ))
+                                    
+                                }
+
+                                {
+                                    state.operacaoSelecionada?.cod === 2 &&
                                     <>
+
                                         <div className="col-12 field">
                                             <FieldName required name='Data Início' />
                                             <Datepicker
@@ -354,7 +457,7 @@ export default function Tarefa_1() {
                                             </label>
                                             <InputText
                                                 className="w-full"
-                                                value={operadoraAtual}
+                                                value={state.nomevt}
                                                 onChange={(e) => setState({ ...state, nomevt: e.value })}
                                             />
                                             <label>
@@ -393,117 +496,6 @@ export default function Tarefa_1() {
                                                 value={state.qtdida}
                                                 onChange={(e) => setState({ ...state, qtdida: e.value })}
                                             />
-                                            <label>
-                                                Quantidade Utilizada para Volta
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.qtdvolta}
-                                                onChange={(volta) => setState({ ...state, qtdvolta: volta.value })}
-                                            />
-                                        </div>
-
-                                        {/* <div className="col-4 field">
-                                            <label>
-                                                Escala Vale Transporte
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.esc}
-                                                onChange={(e) => setState({ ...state, escvtr: e.value })}
-                                            />
-                                        </div> */}
-
-                                        {/* <ContentDivisor content={"LINHA / CARTÃO"}
-                                        />
-
-                                        {
-                                            linhasTransporte.map(l => (
-                                                <>
-                                                    <div className="col-3 field">
-                                                        <label>
-                                                            Linha 1
-                                                        </label>
-                                                        <InputNumber
-                                                            className="w-full"
-                                                            value={l.linha}
-                                                            onChange={(e) => setState({ ...state, linha: e.value })}
-                                                        />
-                                                    </div>
-                                                    <div className="col-3 field">
-                                                        <label>
-                                                            Numero do Cartão
-                                                        </label>
-                                                        <InputNumber
-                                                            className="w-full"
-                                                            value={l.cartao}
-                                                            onChange={(e) => setState({ ...state, cartao: e.value })}
-                                                        />
-                                                    </div>
-                                                    <div className="col-6 field" />
-                                                </>
-                                            ))
-                                        } */}
-                                    </>
-                                }
-
-                                {
-                                    state.operacaoSelecionada?.cod === 2 &&
-                                    <>
-
-                                        <div className="col-12 field">
-
-                                            <FieldName required name='Data Início' />
-                                            <Datepicker
-                                                className='w-full'
-                                                value={state.datainivale}
-                                                onChange={(e) => setState({ ...state, datainivale: e.value })}
-                                                inputClassName='obrigatorio'
-                                            />
-
-                                            <label>
-                                                Numero da Linha
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.codlin}
-                                                onChange={(e) => setState({ ...state, codlin: e.value })}
-                                            />
-                                        </div>
-
-                                        <div className="col-12 field">
-                                            <label>
-                                                Tipo de Transporte
-                                            </label>
-                                            <Dropdown
-                                                value={state.transporteSelecionado}
-                                                options={tipoTransporte}
-                                                className="w-full"
-                                                onChange={(e) => setState({ ...state, transporteSelecionado: e.value })}
-                                            />
-                                        </div>
-                                        <div className="col-12 field">
-                                            <label>
-                                                Valor da Tarifa
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.valor}
-                                                mode="decimal" minFractionDigits={2}
-                                                onChange={(e) => setState({ ...state, valor: e.value })}
-                                            />
-                                        </div>
-                                        <div className="col-12 field">
-                                            <label>
-                                                Quantidade Utilizada para Ida
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.qtdida}
-                                                onChange={(e) => setState({ ...state, qtdida: e.value })}
-                                            />
-                                        </div>
-                                        <div className="col-12 field">
                                             <label>
                                                 Quantidade Utilizada para Volta
                                             </label>
@@ -1014,10 +1006,19 @@ export default function Tarefa_1() {
                                 readonly
                             />
                             <label>
-                                Para qual Período Deseja Solicitar a Alteração?
+                                Escala Atual
                             </label>
                             <InputText className="w-full" value={dados?.empresa.datfil + ' | ' + dados?.usuario.escala}
                                 readonly
+                            />
+                            <label>
+                                Para qual Período Deseja Solicitar a Alteração?
+                            </label>
+                            <Datepicker
+                                className='w-full'
+                                value={state.datainiescala}
+                                onChange={(e) => setState({ ...state, datainiescala: new Date(e.value).toLocaleDateString() })}
+                                inputClassName='obrigatorio'
                             />
 
                         </div>
@@ -1039,20 +1040,21 @@ export default function Tarefa_1() {
                                     <ContentDivisor content={"Vale Transporte"}
                                     />
                                     <label>
-                                        Escala Vale Transporte Atual
+                                        Escala Vale Transporte Atual / Nome Operadora
                                     </label>
-                                    <InputText
-                                        className="w-full"
-                                        value={escalaAtual}
-                                    />
-                                    <label>
-                                        Nome da Operadora de Vale Transporte
-                                    </label>
-                                    <InputText
-                                        className="w-full"
-                                        value={operadoraAtual}
-                                        onChange={(e) => setState({ ...state, nomevt: e.value })}
-                                    />
+
+                                    {
+                                        escalaAtual.length > 0 && escalaAtual?.map(e => (
+
+                                            <>
+                                                <InputText
+                                                    className="w-full mb-2"
+                                                    value={` ${e.escvtr}  -  ${e.inievt}  -  ${e.nomevt}`}
+                                                // onChange={(t) => setState({ ...state, nomevt: t.value })}
+                                                />
+                                            </>
+                                        ))
+                                    }
                                     <Divider align="left" > Linhas </Divider>
                                     <DataTable
                                         value={tableData}
@@ -1175,48 +1177,6 @@ export default function Tarefa_1() {
                                                 onChange={(volta) => setState({ ...state, qtdvolta: volta.value })}
                                             />
                                         </div>
-
-                                        {/* <div className="col-4 field">
-                <label>
-                    Escala Vale Transporte
-                </label>
-                <InputNumber
-                    className="w-full"
-                    value={state.esc}
-                    onChange={(e) => setState({ ...state, escvtr: e.value })}
-                />
-            </div> */}
-
-                                        {/* <ContentDivisor content={"LINHA / CARTÃO"}
-            />
-
-            {
-                linhasTransporte.map(l => (
-                    <>
-                        <div className="col-3 field">
-                            <label>
-                                Linha 1
-                            </label>
-                            <InputNumber
-                                className="w-full"
-                                value={l.linha}
-                                onChange={(e) => setState({ ...state, linha: e.value })}
-                            />
-                        </div>
-                        <div className="col-3 field">
-                            <label>
-                                Numero do Cartão
-                            </label>
-                            <InputNumber
-                                className="w-full"
-                                value={l.cartao}
-                                onChange={(e) => setState({ ...state, cartao: e.value })}
-                            />
-                        </div>
-                        <div className="col-6 field" />
-                    </>
-                ))
-            } */}
                                     </>
                                 }
 
@@ -1235,6 +1195,14 @@ export default function Tarefa_1() {
                                             />
 
                                             <label>
+                                                Nome da Operadora
+                                            </label>
+                                            <InputText
+                                                className="w-full"
+                                                value={state.nomevt}
+                                                onChange={(e) => setState({ ...state, nomevt: e.value })}
+                                            />
+                                            <label>
                                                 Numero da Linha
                                             </label>
                                             <InputNumber
@@ -1242,9 +1210,7 @@ export default function Tarefa_1() {
                                                 value={state.codlin}
                                                 onChange={(e) => setState({ ...state, codlin: e.value })}
                                             />
-                                        </div>
 
-                                        <div className="col-12 field">
                                             <label>
                                                 Tipo de Transporte
                                             </label>
@@ -1254,8 +1220,7 @@ export default function Tarefa_1() {
                                                 className="w-full"
                                                 onChange={(e) => setState({ ...state, transporteSelecionado: e.value })}
                                             />
-                                        </div>
-                                        <div className="col-12 field">
+
                                             <label>
                                                 Valor da Tarifa
                                             </label>
@@ -1265,8 +1230,6 @@ export default function Tarefa_1() {
                                                 mode="decimal" minFractionDigits={2}
                                                 onChange={(e) => setState({ ...state, valor: e.value })}
                                             />
-                                        </div>
-                                        <div className="col-12 field">
                                             <label>
                                                 Quantidade Utilizada para Ida
                                             </label>
@@ -1275,8 +1238,6 @@ export default function Tarefa_1() {
                                                 value={state.qtdida}
                                                 onChange={(e) => setState({ ...state, qtdida: e.value })}
                                             />
-                                        </div>
-                                        <div className="col-12 field">
                                             <label>
                                                 Quantidade Utilizada para Volta
                                             </label>
@@ -1286,7 +1247,6 @@ export default function Tarefa_1() {
                                                 onChange={(volta) => setState({ ...state, qtdvolta: volta.value })}
                                             />
                                         </div>
-
 
                                     </>
                                 }
@@ -1312,7 +1272,6 @@ export default function Tarefa_1() {
                                     </>
                                 }
                             </>
-
                         }
                     </>
                 }
@@ -1382,25 +1341,6 @@ export default function Tarefa_1() {
 
                         </div>
 
-                        <div className="col-12 field">
-                            <ContentDivisor content={"Vale Transporte"}
-                            />
-                            <label>
-                                Escala Vale de transporte Atual
-                            </label>
-                            <InputText
-                                className="w-full"
-                                value={escalaAtual}
-                            />
-                            <label>
-                                Nome da Operadora de Vale Transporte
-                            </label>
-                            <InputText
-                                className="w-full"
-                                value={operadoraAtual}
-                                onChange={(e) => setState({ ...state, operadoraAtual: e.value })}
-                            />
-                        </div>
 
                         <div className="col-12 field">
                             <label>Tipo de operação</label>
@@ -1411,7 +1351,70 @@ export default function Tarefa_1() {
                                 onChange={(e) => setState({ ...state, operacaoSelecionada: e.value })}
                             />
                         </div>
+                        <div className="col-12 field">
+                            <ContentDivisor content={"Vale Transporte"}
+                            />
+                            <label>
+                                Escala Vale Transporte Atual / Nome Operadora
+                            </label>
 
+                            {
+                                escalaAtual.length > 0 && escalaAtual?.map(e => (
+
+                                    <>
+                                        <InputText
+                                            className="w-full mb-2"
+                                            value={` ${e.escvtr}  -  ${e.inievt}  -  ${e.nomevt}`}
+                                        // onChange={(t) => setState({ ...state, nomevt: t.value })}
+                                        />
+                                    </>
+                                ))
+                            }
+                            <Divider align="left" > Linhas </Divider>
+                            <DataTable
+                                value={tableData}
+                                emptyMessage={'Nenhum resultado encontrado'}
+                                loading={tableData == []}
+                                size='small'
+                                accept='application/pdf'
+                                scrollable
+                                scrollHeight='20rem'
+                                header='Linhas de Vale Transporte'
+                                tableClassName='text-700'
+                            >
+                                <Column
+                                    header='Linha'
+                                    field='codlin'
+                                />
+                                <Column
+                                    header='Nome da Linha'
+                                    field='nomlin'
+                                />
+                            </DataTable>
+
+                            {
+                                numerolinha.length > 0 && numerolinha?.map(l => (
+                                    <div className="col-4 flex flex-column mb-2">
+                                        <InputText className="w-full" value={l.codlin}
+                                            readonly
+                                        />
+                                    </div>
+                                ))
+
+                            }
+
+                            {
+                                nomelinha.length > 0 && nomelinha?.map(n => (
+                                    <div className="col-4 flex flex-column mb-2">
+                                        <InputText className="w-full" value={n.nomlin}
+                                            readonly
+                                        />
+                                    </div>
+                                ))
+
+                            }
+
+                        </div>
 
                         {
                             state.operacaoSelecionada?.cod === 1 &&
@@ -1478,48 +1481,6 @@ export default function Tarefa_1() {
                                         onChange={(volta) => setState({ ...state, qtdvolta: volta.value })}
                                     />
                                 </div>
-
-                                {/* <div className="col-4 field">
-                                            <label>
-                                                Escala Vale Transporte
-                                            </label>
-                                            <InputNumber
-                                                className="w-full"
-                                                value={state.esc}
-                                                onChange={(e) => setState({ ...state, escvtr: e.value })}
-                                            />
-                                        </div> */}
-
-                                {/* <ContentDivisor content={"LINHA / CARTÃO"}
-                                        />
-
-                                        {
-                                            linhasTransporte.map(l => (
-                                                <>
-                                                    <div className="col-3 field">
-                                                        <label>
-                                                            Linha 1
-                                                        </label>
-                                                        <InputNumber
-                                                            className="w-full"
-                                                            value={l.linha}
-                                                            onChange={(e) => setState({ ...state, linha: e.value })}
-                                                        />
-                                                    </div>
-                                                    <div className="col-3 field">
-                                                        <label>
-                                                            Numero do Cartão
-                                                        </label>
-                                                        <InputNumber
-                                                            className="w-full"
-                                                            value={l.cartao}
-                                                            onChange={(e) => setState({ ...state, cartao: e.value })}
-                                                        />
-                                                    </div>
-                                                    <div className="col-6 field" />
-                                                </>
-                                            ))
-                                        } */}
                             </>
                         }
 
@@ -1528,15 +1489,22 @@ export default function Tarefa_1() {
                             <>
 
                                 <div className="col-12 field">
-
                                     <FieldName required name='Data Início' />
                                     <Datepicker
                                         className='w-full'
                                         value={state.datainivale}
-                                        onChange={(e) => setState({ ...state, datainivale: e.value })}
+                                        onChange={(e) => setState({ ...state, datainivale: new Date(e.value).toLocaleDateString() })}
                                         inputClassName='obrigatorio'
                                     />
 
+                                    <label>
+                                        Nome da Operadora
+                                    </label>
+                                    <InputText
+                                        className="w-full"
+                                        value={state.nomevt}
+                                        onChange={(e) => setState({ ...state, nomevt: e.value })}
+                                    />
                                     <label>
                                         Numero da Linha
                                     </label>
@@ -1545,9 +1513,7 @@ export default function Tarefa_1() {
                                         value={state.codlin}
                                         onChange={(e) => setState({ ...state, codlin: e.value })}
                                     />
-                                </div>
 
-                                <div className="col-12 field">
                                     <label>
                                         Tipo de Transporte
                                     </label>
@@ -1557,8 +1523,7 @@ export default function Tarefa_1() {
                                         className="w-full"
                                         onChange={(e) => setState({ ...state, transporteSelecionado: e.value })}
                                     />
-                                </div>
-                                <div className="col-12 field">
+
                                     <label>
                                         Valor da Tarifa
                                     </label>
@@ -1568,8 +1533,6 @@ export default function Tarefa_1() {
                                         mode="decimal" minFractionDigits={2}
                                         onChange={(e) => setState({ ...state, valor: e.value })}
                                     />
-                                </div>
-                                <div className="col-12 field">
                                     <label>
                                         Quantidade Utilizada para Ida
                                     </label>
@@ -1578,8 +1541,6 @@ export default function Tarefa_1() {
                                         value={state.qtdida}
                                         onChange={(e) => setState({ ...state, qtdida: e.value })}
                                     />
-                                </div>
-                                <div className="col-12 field">
                                     <label>
                                         Quantidade Utilizada para Volta
                                     </label>

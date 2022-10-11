@@ -18,6 +18,8 @@ import ContentDivisor from '../components/ContentDivisor';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import getEscalasLinhas from '../Services/getEscalasLinhas';
+import { Dialog } from 'primereact/dialog';
+import { ListBox } from 'primereact/listbox';
 
 
 export default function Tarefa_2() {
@@ -42,12 +44,13 @@ export default function Tarefa_2() {
         operacaoSelecionada: globalState.variaveisProcesso.operacaoSelecionada,
         transporteSelecionado: globalState.variaveisProcesso.transporteSelecionado,
         VTAtual: globalState.variaveisProcesso.VTAtual,
-        novoperiodo: globalState.variaveisProcesso.novoperiodo,
+        // novoperiodo: globalState.variaveisProcesso.novoperiodo,
         fimperiodo: globalState.variaveisProcesso.fimperiodo,
         escvtr: globalState.variaveisProcesso.escvtr,
         numerolinha: globalState.variaveisProcesso.codlin,
         nomelinha: globalState.variaveisProcesso.nomlin,
-        inievt: globalState.variaveisProcesso.inievt
+        inievt: globalState.variaveisProcesso.inievt,
+        datainiescala: globalState.variaveisProcesso.datainiescala
     }
 
     const [motivoSelecionado, setMotivoSelecionado] = useState(null)
@@ -96,6 +99,9 @@ export default function Tarefa_2() {
     const [tableData, setTableData] = useState([])
     const [linhasEscala, setLinhasEscala] = useState([])
     const [linhaSelecionada, setLinhaSelecionada] = useState(null)
+    const [sugestaoEscalas, setSugestaoEscala] = useState([])
+    const [modalVisible, setModalVisible] = useState(false)
+    
 
     // useEffect(() => {
     //     getColaborador(globalState.usuario.subject).then((param) => {
@@ -149,18 +155,7 @@ export default function Tarefa_2() {
         })
     }, [])
 
-    useEffect(() => {
-        getColaborador(globalState.usuario.subject).then((param) => {
-            setNumeroLinha(param)
-            getEscalaAtualColaborador(param.usuario.numEmp, param.usuario.tipCol, param.usuario.numCad)
-                .then((l) => {
-                    if (l.escalas.linhas.length > 0) {
-                        // setNumeroLinha(l.escalas.linhas)
-                        setTableData(l.escalas.linhas);
-                    }
-                })
-        })
-    }, [])
+
 
     useEffect(() => {
         getColaborador(globalState.usuario.subject).then((param) => {
@@ -183,6 +178,26 @@ export default function Tarefa_2() {
         })
     }, [])
 
+
+    useEffect(() => {
+        let linhas = []
+        globalState.variaveisProcesso.tarefa1_JSON.escvtr.map((e) => {
+            e.linhas.map((p) => {
+                linhas.push(p)
+            })
+        })
+        console.log(linhas)
+        setTableData(linhas)
+    }, [])
+
+    function completeMethod({ query }) {
+        let _escalas_sugestao;
+        console.log(query)
+        _escalas_sugestao = linhasEscala.filter((linhas) => {
+            return linhas.nomevt.toLowerCase().startsWith(query.toLowerCase());
+        });
+        setSugestaoEscala(_escalas_sugestao)
+    }
 
     // Salvar variaveis do processo
     useEffect(() => {
@@ -245,18 +260,19 @@ export default function Tarefa_2() {
                             readOnly
                             className="w-full"
                         />
-                        <label> Nome da operadora de Vale Transporte. </label>
-                        <InputText
-                            value={state.nomevt}
-                            readOnly
-                            className="w-full"
-                        />
-                        <label> Escala do Vale transporte. </label>
-                        <InputText
-                            value={state.escvtr}
-                            readOnly
-                            className="w-full"
-                        />
+                        <label> Escala do Vale transporte / Nome Operadora. </label>
+                        {
+                            globalState.variaveisProcesso.tarefa1_JSON.escvtr && globalState.variaveisProcesso.tarefa1_JSON.escvtr?.map(e => (
+
+                                <>
+                                    <InputText
+                                        className="w-full mb-2"
+                                        value={` ${e.escvtr}  -  ${e.inievt}  -  ${e.nomevt}`}
+                                    // onChange={(t) => setState({ ...state, nomevt: t.value })}
+                                    />
+                                </>
+                            ))
+                        }
                         <Divider align="left" >  </Divider>
                         <DataTable
                             value={tableData}
@@ -303,57 +319,66 @@ export default function Tarefa_2() {
                             readOnly
                             className="w-full"
                         />
-                        <label> Data de inicio. </label>
-                        <InputText
-                            value={new Date(globalState.variaveisProcesso.novoperiodo).toLocaleDateString()}
-                            readOnly
-                            className="w-full"
-                        />
-                        <ContentDivisor content={"Escala Vale Transporte"}
-                        />
-                        <Dropdown
-                            value={linhaSelecionada}
-                            options={linhasEscala}
-                            className="w-full"
-                            onChange={(e) => setLinhaSelecionada(e.value)}
-                        />
-                        <ContentDivisor content={"Linhas-------------------------------------Cartão"}
+                        <div className="col-12 field">
+                            <ContentDivisor content={"Escala Vale Transporte"}
+                            />
+                               
+                               <Dialog 
+                                    visible={modalVisible}
+                                    onHide={()=>setModalVisible(false)}
+                                    style={{ width: '50vw' }}
+                                    position={"top"}
+                               >
+                               <ListBox 
+                                    value={linhaSelecionada} 
+                                    options={linhasEscala} 
+                                    listStyle={{ height: '700px' }}
+                                    onChange={(e) => {
+                                        setLinhaSelecionada(e.value)
+                                        setModalVisible(false)
+                    
+                                    }}
+                               />
+                               </Dialog>
+                            <InputText 
+                                value={linhaSelecionada?.nomevt}
+                                placeholder="Select Item"
+                                className="w-full"
+                                onFocus={()=>setModalVisible(true)}
+                            // onChange={(e) => setLinhaSelecionada(e.value)}
+                            />
+                            <div className="col-12 field">
+                                <label> Data de inicio. </label>
+                                <InputText
+                                    value={(globalState.variaveisProcesso.datainivale)}
+                                    readOnly
+                                    className="w-full"
+                                />
+                            </div>
+                        </div>
+
+                        <ContentDivisor content={"Linhas / Cartão"}
                         />
                         {
                             linhaSelecionada?.linhas.length > 0 && linhaSelecionada.linhas?.map((l, i) => (
-                                <div className="col-6 flex">
+                                <div className="col-8 flex">
                                     <InputText className="w-full" value={`${l.codlin} - ${l.nomlin}`}
                                         readonly
                                     />
-                                    <div className="col-6 flex">
-                                        <InputNumber
-                                            className="w-full"
-                                            value={l?.cartao}
-                                            onChange={(e) => {
-                                                let linhasCopy = Array.from(linhaSelecionada.linhas)
-                                                linhasCopy[i].cartao = e.value
-                                                setLinhaSelecionada({ ...linhaSelecionada, linhas: linhasCopy })
-                                            }}
-                                        />
-                                    </div>
+                                    <InputNumber
+                                        className="w-full"
+                                        value={l?.cartao}
+                                        onChange={(e) => {
+                                            let linhasCopy = Array.from(linhaSelecionada.linhas)
+                                            linhasCopy[i].cartao = e.value
+                                            setLinhaSelecionada({ ...linhaSelecionada, linhas: linhasCopy })
+                                        }}
+                                    />
+
                                 </div>
                             ))
 
                         }
-
-
-                        {/* <label> Linha </label>
-                        <InputText
-                            value={globalState.variaveisProcesso.linha}
-                            readOnly
-                            className="w-full"
-                        />
-                        <label> Cartão </label>
-                        <InputText
-                            value={globalState.variaveisProcesso.cartao}
-                            readOnly
-                            className="w-full"
-                        /> */}
                     </>
                 }
 
@@ -430,7 +455,7 @@ export default function Tarefa_2() {
                         />
                         <label> Data de inicio. </label>
                         <InputText
-                            value={new Date(globalState.variaveisProcesso.novoperiodo).toLocaleDateString()}
+                            value={new Date(globalState.variaveisProcesso.datainivale).toLocaleDateString()}
                             readOnly
                             className="w-full"
                         />
@@ -492,7 +517,7 @@ export default function Tarefa_2() {
 
                         <label> Data de inicio. </label>
                         <InputText
-                            value={new Date(globalState.variaveisProcesso.novoperiodo).toLocaleDateString()}
+                            value={new Date(globalState.variaveisProcesso.datainivale).toLocaleDateString()}
                             readOnly
                             className="w-full"
                         />
